@@ -1,10 +1,14 @@
 <?php
+/**
+ * @file jdt_core.install
+ * This include file implements coder functionality for comments.
+ */
 
 /*
 Hook_update_N.
 */
 function jdt_core_update_7000() {
-	// Array of modules that we want to install
-	$module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu");
-	module_enable($module_list, $enable_dependencies = TRUE);
+  // Array of modules that we want to install
+  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu");
+  module_enable($module_list, $enable_dependencies = TRUE);
 }
