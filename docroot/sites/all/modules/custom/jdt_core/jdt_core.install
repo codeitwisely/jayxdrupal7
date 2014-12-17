@@ -10,6 +10,7 @@
 function jdt_core_install() {
   jdt_core_update_7000();
   jdt_core_update_7001();
+  jdt_core_update_7002();
 }
 
 /*
@@ -28,4 +29,13 @@ function jdt_core_update_7001() {
   //Array of modules taht we want to disable
   $module_list = array("toolbar", "shortcut", "overlay");
   module_disable($module_list, $disable_dependents = TRUE);
+}
+
+/*
+* jdt_core_update_7002()
+*/
+function jdt_core_update_7002() {
+  // Here we want to enable jdt_content_type_article feature
+  $module_list = array("jdt_content_type_article");
+  module_enable($module_list, $enable_dependencies = TRUE);
 }
