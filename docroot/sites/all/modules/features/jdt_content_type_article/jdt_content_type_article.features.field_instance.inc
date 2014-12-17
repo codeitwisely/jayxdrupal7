@@ -157,6 +157,84 @@ function jdt_content_type_article_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-article_1-field_contributor'
+  $field_instances['node-article_1-field_contributor'] = array(
+    'bundle' => 'article_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => NULL,
+        'settings' => array(),
+        'type' => NULL,
+        'weight' => 5,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_contributor',
+    'label' => 'Contributor',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => NULL,
+      'settings' => array(),
+      'type' => NULL,
+      'weight' => 8,
+    ),
+  );
+
+  // Exported field_instance: 'node-article_1-field_related_articles'
+  $field_instances['node-article_1-field_related_articles'] = array(
+    'bundle' => 'article_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => NULL,
+        'settings' => array(),
+        'type' => NULL,
+        'weight' => 4,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_related_articles',
+    'label' => 'Related articles',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => NULL,
+      'settings' => array(
+        'autocomplete_match' => 'contains',
+        'autocomplete_path' => 'node_reference/autocomplete',
+        'size' => 60,
+      ),
+      'type' => NULL,
+      'weight' => 7,
+    ),
+  );
+
   // Exported field_instance: 'node-article_1-field_slug'
   $field_instances['node-article_1-field_slug'] = array(
     'bundle' => 'article_1',
@@ -202,6 +280,8 @@ function jdt_content_type_article_field_default_field_instances() {
   t('Article date');
   t('Article image');
   t('Body');
+  t('Contributor');
+  t('Related articles');
   t('Slug');
 
   return $field_instances;
