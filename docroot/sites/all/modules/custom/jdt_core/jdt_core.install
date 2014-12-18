@@ -5,7 +5,7 @@
  */
 
 /**
- * implements jdt_core_install().
+ * Implements jdt_core_install().
  */
 function jdt_core_install() {
   jdt_core_update_7000();
