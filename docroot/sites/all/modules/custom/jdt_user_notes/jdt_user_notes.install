@@ -61,7 +61,7 @@ function jdt_user_notes_schema() {
  */
 
 /**
-* Implements jdt_user_notes_insert($entry)
+* Implements jdt_user_notes_insert($entry).
 **/
 function jdt_user_notes_insert($entry) {
   $return_value = NULL;
@@ -78,7 +78,7 @@ function jdt_user_notes_insert($entry) {
 }
 
 /**
-* Implements jdt_user_notes_update($entry)
+* Implements jdt_user_notes_update($entry).
 */
 function jdt_user_notes_update($entry) {
   try {
