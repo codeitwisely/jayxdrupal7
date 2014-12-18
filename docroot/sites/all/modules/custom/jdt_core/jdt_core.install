@@ -2,10 +2,10 @@
 /**
  * @file jdt_core.install
  * This include file implements coder functionality for comments.
- */
+*/
 
-/*
-* jdt_core_install()
+/**
+ * implemets jdt_core_install()
 */
 function jdt_core_install() {
   jdt_core_update_7000();
@@ -13,8 +13,8 @@ function jdt_core_install() {
   jdt_core_update_7002();
 }
 
-/*
-* jdt_core_update_7000()
+/**
+ * implements jdt_core_update_7000()
 */
 function jdt_core_update_7000() {
   // Array of modules that we want to enable
@@ -22,8 +22,8 @@ function jdt_core_update_7000() {
   module_enable($module_list, $enable_dependencies = TRUE);
 }
 
-/*
-* jdt_core_update_7001()
+/**
+ * implements jdt_core_update_7001()
 */
 function jdt_core_update_7001() {
   //Array of modules taht we want to disable
@@ -31,8 +31,8 @@ function jdt_core_update_7001() {
   module_disable($module_list, $disable_dependents = TRUE);
 }
 
-/*
-* jdt_core_update_7002()
+/**
+* impelements jdt_core_update_7002()
 */
 function jdt_core_update_7002() {
   // Here we want to enable jdt_content_type_article feature
