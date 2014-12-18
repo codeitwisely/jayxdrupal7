@@ -71,7 +71,7 @@ function jdt_content_type_article_strongarm() {
           'weight' => '0',
         ),
         'path' => array(
-          'weight' => '6',
+          'weight' => '7',
         ),
       ),
       'display' => array(),

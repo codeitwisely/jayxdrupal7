@@ -190,7 +190,7 @@ function jdt_content_type_article_field_default_field_instances() {
       'module' => NULL,
       'settings' => array(),
       'type' => NULL,
-      'weight' => 8,
+      'weight' => 6,
     ),
   );
 
@@ -231,7 +231,7 @@ function jdt_content_type_article_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => NULL,
-      'weight' => 7,
+      'weight' => 5,
     ),
   );
 
