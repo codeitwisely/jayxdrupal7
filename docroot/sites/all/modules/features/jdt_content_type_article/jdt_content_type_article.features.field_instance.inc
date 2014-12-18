@@ -166,9 +166,9 @@ function jdt_content_type_article_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => NULL,
+        'module' => 'user_reference',
         'settings' => array(),
-        'type' => NULL,
+        'type' => 'user_reference_default',
         'weight' => 5,
       ),
       'teaser' => array(
@@ -203,9 +203,9 @@ function jdt_content_type_article_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => NULL,
+        'module' => 'node_reference',
         'settings' => array(),
-        'type' => NULL,
+        'type' => 'node_reference_default',
         'weight' => 4,
       ),
       'teaser' => array(
@@ -224,13 +224,13 @@ function jdt_content_type_article_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => NULL,
+      'module' => 'node_reference',
       'settings' => array(
         'autocomplete_match' => 'contains',
         'autocomplete_path' => 'node_reference/autocomplete',
         'size' => 60,
       ),
-      'type' => NULL,
+      'type' => 'node_reference_autocomplete',
       'weight' => 5,
     ),
   );
