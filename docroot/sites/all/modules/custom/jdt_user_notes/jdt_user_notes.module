@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file jdt_user_notes.module
+ * This file includes hooks for permissions and other...
+ */
+
+/**
+ * Implements jdt_user_notes_permissions().
+ */
+function jdt_user_notes_permission() {
+  return array(
+    'jdt_user_notes' => array(
+      'title' => t('Administer jdt user notes module'),
+      'description' => t('Perform administration tasks for jdt_user_notes.'),
+    ),
+  );
+}

@@ -1,0 +1,95 @@
+<?php
+/**
+ * @file jdt_user_notes.install
+ * This will implements fonctionnality to install the jdt_user_notes module.
+ */
+
+/**
+ * Implements jdt_user_notes_install().
+ */
+function jdt_user_notes_install() {
+  jdt_user_notes_schema();
+}
+
+/**
+ * Implements jdt_user_notes_schema().
+ */
+function jdt_user_notes_schema() {
+  $schema['jdt_user_notes'] = array(
+    'description' => 'D7 jdt_user_notes table',
+    'fields' => array(
+      'note_id' => array(
+        'description' => 'ID of the note',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
+      'article_nid' => array(
+        'description' => 'Id of the article',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'author_uid' => array(
+        'description' => 'Id of the author',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'note_text' => array(
+        'description' => 'Text of the author',
+        'type' => 'varchar',
+        'length' => 150,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('note_id'),
+    'indexes' => array(
+      'note_id' => array('note_id'),
+      'article_nid' => array('article_nid'),
+      'author_uid' => array('author_uid'),
+      'note_text' => array('note_text'),
+),
+);
+  return $schema;
+}
+
+/**
+ * Creating standard permissions such as adding notes, deleting notes, updating notes
+ */
+
+/**
+* Implements jdt_user_notes_insert($entry)
+**/
+function jdt_user_notes_insert($entry) {
+  $return_value = NULL;
+  try {
+    $return_value = db_insert('jdt_user_notes')
+      ->fields($entry)
+      ->execute();
+  }
+  catch (Exception $e) {
+    drupal_set_message(t('Failed to insert in db. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+  return $return_value;
+}
+
+/**
+* Implements jdt_user_notes_update($entry)
+*/
+function jdt_user_notes_update($entry) {
+  try {
+    $count = db_update('jdt_user_notes')
+      ->fields($entry)
+      ->condition('note_id', $entry['note_id'])
+      ->execute();
+  }
+  catch (Exception $e) {
+    drupal_set_message(t('Failed to update the DB. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+  return $count;
+}
