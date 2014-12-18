@@ -169,11 +169,7 @@ function jdt_content_type_article_field_default_field_instances() {
         'module' => 'user_reference',
         'settings' => array(),
         'type' => 'user_reference_default',
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
-        'weight' => 5,
-=======
         'weight' => 4,
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
       ),
       'teaser' => array(
         'label' => 'above',
@@ -193,13 +189,8 @@ function jdt_content_type_article_field_default_field_instances() {
       'active' => 1,
       'module' => 'options',
       'settings' => array(),
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
-      'type' => NULL,
-      'weight' => 6,
-=======
       'type' => 'options_select',
       'weight' => 10,
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
     ),
   );
 
@@ -215,11 +206,7 @@ function jdt_content_type_article_field_default_field_instances() {
         'module' => 'node_reference',
         'settings' => array(),
         'type' => 'node_reference_default',
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
-        'weight' => 4,
-=======
         'weight' => 5,
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
       ),
       'teaser' => array(
         'label' => 'above',
@@ -244,11 +231,7 @@ function jdt_content_type_article_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'node_reference_autocomplete',
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
-      'weight' => 5,
-=======
       'weight' => 9,
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.features.field_instance.inc
     ),
   );
 

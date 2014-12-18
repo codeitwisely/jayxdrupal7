@@ -1,26 +1,19 @@
 name = jdt_content_type_article
-description = Export article ontent type definitions
+description = Export content type definitions and view definition
 core = 7.x
 package = Appnovation features
-version = 7.x-1.1
+version = 7.x-1.2
 project = jdt_content_type_article
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.info
-=======
-dependencies[] = ctools
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.info
 dependencies[] = date
 dependencies[] = features
 dependencies[] = field_group
 dependencies[] = image
 dependencies[] = node_reference
 dependencies[] = strongarm
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.info
-dependencies[] = user_reference
-dependencies[] = views
-=======
 dependencies[] = text
 dependencies[] = user_reference
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.info
+dependencies[] = views
+features[ctools][] = field_group:field_group:1
 features[ctools][] = strongarm:strongarm:1
 features[ctools][] = views:views_default:3.0
 features[features_api][] = api:2
@@ -52,10 +45,7 @@ features[variable][] = menu_parent_article_1
 features[variable][] = node_options_article_1
 features[variable][] = node_preview_article_1
 features[variable][] = node_submitted_article_1
-<<<<<<< HEAD:docroot/sites/all/modules/features/jdt_content_type_article/jdt_content_type_article.info
 features[views_view][] = view_for_articles
-mtime = 1418884404
-=======
-mtime = 1418927585
+features_exclude[dependencies][ctools] = ctools
+features_exclude[dependencies][options] = options
 project path = sites/all/modules/custom
->>>>>>> 55ff16bb03e1c1faa12eef7d8506028234c382f8:docroot/sites/all/modules/custom/jdt_content_type_article/jdt_content_type_article.info
