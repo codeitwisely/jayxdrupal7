@@ -1,41 +1,36 @@
 <?php
 /**
- * @file jdt_core.install
+ * @file
+ * jdt_core.install
  * This include file implements coder functionality for comments.
  */
 
 /**
- * Implements jdt_core_install().
- */
-function jdt_core_install() {
-  jdt_core_update_7000();
-  jdt_core_update_7001();
-  jdt_core_update_7002();
-}
-
-/**
  * Implements jdt_core_update_7000().
+ * Enable some contrib modules.
  */
 function jdt_core_update_7000() {
-  // Array of modules that we want to enable
-  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "date", "field_group", "references");
-  module_enable($module_list, $enable_dependencies = TRUE);
+  // Array of modules that we want to enable.
+  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "date", "field_group", "references", "views_ui");
+  module_enable($module_list);
 }
 
 /**
  * Implements jdt_core_update_7001().
+ * Disable some contrib modules.
  */
 function jdt_core_update_7001() {
-  //Array of modules taht we want to disable
+  //Array of modules taht we want to disable.
   $module_list = array("toolbar", "shortcut", "overlay");
-  module_disable($module_list, $disable_dependents = TRUE);
+  module_disable($module_list);
 }
 
 /**
  * Implements jdt_core_update_7002().
+ * Enable jdt_content_type_article feature.
  */
 function jdt_core_update_7002() {
-  // Here we want to enable jdt_content_type_article feature
+  // Here we want to enable jdt_content_type_article feature.
   $module_list = array("jdt_content_type_article");
-  module_enable($module_list, $enable_dependencies = TRUE);
+  module_enable($module_list);
 }

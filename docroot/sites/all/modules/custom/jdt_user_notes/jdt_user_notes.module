@@ -1,7 +1,8 @@
 <?php
 /**
- * @file jdt_user_notes.module
- * This file includes hooks for permissions and other...
+ * @file
+ * jdt_user_notes.module
+ * This file includes hooks for permissions and other.
  */
 
 /**

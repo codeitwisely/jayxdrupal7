@@ -1,5 +1,6 @@
 <?php
 /**
- * @file jdt_core.module
+ * @file
+ * jdt_core.module
  * This include file implements coder functionality for comments.
  */

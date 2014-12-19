@@ -1,15 +1,9 @@
 <?php
 /**
- * @file jdt_user_notes.install
+ * @file
+ * jdt_user_notes.install
  * This will implements fonctionnality to install the jdt_user_notes module.
  */
-
-/**
- * Implements jdt_user_notes_install().
- */
-function jdt_user_notes_install() {
-  jdt_user_notes_schema();
-}
 
 /**
  * Implements jdt_user_notes_schema().
@@ -57,7 +51,7 @@ function jdt_user_notes_schema() {
 }
 
 /**
- * Creating standard permissions such as adding notes, deleting notes, updating notes
+ * Creating standard permissions such as adding notes, deleting notes, updating notes.
  */
 
 /**
