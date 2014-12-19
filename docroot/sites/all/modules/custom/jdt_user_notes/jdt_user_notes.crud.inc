@@ -27,7 +27,7 @@ function jdt_user_notes_update() {
  * Implements jdt_user_notes_delete.
  * Function to delete a note.
  */
-function jdt_user_notes_delete() {
+function jdt_user_notes_delete($entry = array()) {
   db_delete('jdt_user_notes')
     ->condition('note_id', $entry['note_id'])
     ->execute();
@@ -37,7 +37,7 @@ function jdt_user_notes_delete() {
  * Implements jdt_user_notes_insert($entry).
  * Function to Add Note.
  */
-function jdt_user_notes_insert($entry) {
+function jdt_user_notes_insert($entry = array()) {
   $return_value = NULL;
   try{
     $return_value = db_insert('jdt_user_notes')
