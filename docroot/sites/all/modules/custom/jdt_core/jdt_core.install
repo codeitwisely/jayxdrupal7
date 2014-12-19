@@ -12,7 +12,7 @@
 function jdt_core_update_7000() {
   // Array of modules that we want to enable.
   $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "date");
-  module_enable($module_list, TRUE);
+  module_enable($module_list);
 }
 
 /**
@@ -22,7 +22,7 @@ function jdt_core_update_7000() {
 function jdt_core_update_7001() {
   //Array of modules taht we want to disable.
   $module_list = array("toolbar", "shortcut", "overlay");
-  module_disable($module_list, TRUE);
+  module_disable($module_list);
 }
 
 /**
@@ -32,5 +32,5 @@ function jdt_core_update_7001() {
 function jdt_core_update_7002() {
   // Here we want to enable jdt_content_type_article feature.
   $module_list = array("jdt_content_type_article");
-  module_enable($module_list, TRUE);
+  module_enable($module_list);
 }
