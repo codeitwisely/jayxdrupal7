@@ -3,3 +3,6 @@ description =Allow users to add their own notes to an article
 core = 7.x
 package = Appnovation modules
 version = "7.x-1.0"
+testing_api = 2.x
+files[] = jdt_user_notes.crud.inc
+files[] = jdt_user_notes.test

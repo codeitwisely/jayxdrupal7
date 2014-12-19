@@ -16,3 +16,12 @@ function jdt_user_notes_permission() {
     ),
   );
 }
+
+/**
+ * Implements jdt_user_notes_simpletest().
+ */
+function jdt_user_notes_simpletest() {
+  $dir = drupal_get_path('module', 'jdt_user_notes');
+  $tests = file_scan_directory($dir, '\.test$');
+  return array_keys($tests);
+}

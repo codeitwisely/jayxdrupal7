@@ -24,7 +24,7 @@ function jdt_user_notes_update() {
 }
 
 /**
- * Implements jdt_user_notes_delete.
+ * Implements jdt_user_notes_delete($entry = array()).
  * Function to delete a note.
  */
 function jdt_user_notes_delete($entry = array()) {
@@ -34,7 +34,7 @@ function jdt_user_notes_delete($entry = array()) {
 }
 
 /**
- * Implements jdt_user_notes_insert($entry).
+ * Implements jdt_user_notes_insert($entry = array()).
  * Function to Add Note.
  */
 function jdt_user_notes_insert($entry = array()) {
