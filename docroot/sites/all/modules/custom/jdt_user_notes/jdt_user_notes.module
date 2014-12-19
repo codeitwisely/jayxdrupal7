@@ -22,8 +22,8 @@ function jdt_user_notes_permission() {
  */
 
 /**
-* Implements jdt_user_notes_insert($entry).
-**/
+ * Implements jdt_user_notes_insert($entry).
+ */
 function jdt_user_notes_insert($entry) {
   $return_value = NULL;
   try {
@@ -39,8 +39,8 @@ function jdt_user_notes_insert($entry) {
 }
 
 /**
-* Implements jdt_user_notes_update($entry).
-*/
+ * Implements jdt_user_notes_update($entry).
+ */
 function jdt_user_notes_update($entry) {
   try {
     $count = db_update('jdt_user_notes')
@@ -58,7 +58,7 @@ function jdt_user_notes_update($entry) {
 /**
  * Implements jdt_user_notes_delete($entry).
  * We specify the entry that we want to delete on the database.
- **/
+ */
 function jdt_user_notes_delete($entry) {
   db_delete('jdt_user_notes')
     ->condition('note_id', $entry['note_id'])
