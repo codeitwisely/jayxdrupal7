@@ -64,7 +64,7 @@ function jdt_content_type_article_field_default_field_instances() {
         'label' => 'above',
         'module' => 'date',
         'settings' => array(
-          'format_type' => 'long',
+          'format_type' => 'custom_date',
           'fromto' => 'both',
           'multiple_from' => '',
           'multiple_number' => '',
