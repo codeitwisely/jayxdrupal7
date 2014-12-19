@@ -16,3 +16,51 @@ function jdt_user_notes_permission() {
     ),
   );
 }
+
+/**
+ * Creating standard permissions such as adding notes, deleting notes, updating notes.
+ */
+
+/**
+* Implements jdt_user_notes_insert($entry).
+**/
+function jdt_user_notes_insert($entry) {
+  $return_value = NULL;
+  try {
+    $return_value = db_insert('jdt_user_notes')
+      ->fields($entry)
+      ->execute();
+  }
+  catch (Exception $e) {
+    drupal_set_message(t('Failed to insert in db. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+  return $return_value;
+}
+
+/**
+* Implements jdt_user_notes_update($entry).
+*/
+function jdt_user_notes_update($entry) {
+  try {
+    $count = db_update('jdt_user_notes')
+      ->fields($entry)
+      ->condition('note_id', $entry['note_id'])
+      ->execute();
+  }
+  catch (Exception $e) {
+    drupal_set_message(t('Failed to update the DB. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+  return $count;
+}
+
+/**
+ * Implements jdt_user_notes_delete($entry).
+ * We specify the entry that we want to delete on the database.
+ **/
+function jdt_user_notes_delete($entry) {
+  db_delete('jdt_user_notes')
+    ->condition('note_id', $entry['note_id'])
+    ->execute();
+}
