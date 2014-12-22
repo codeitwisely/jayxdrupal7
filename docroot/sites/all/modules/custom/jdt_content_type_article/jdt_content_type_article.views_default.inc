@@ -53,7 +53,7 @@ function jdt_content_type_article_views_default_views() {
   $handler->display->display_options['fields']['field_article_date']['field'] = 'field_article_date';
   $handler->display->display_options['fields']['field_article_date']['label'] = 'Date';
   $handler->display->display_options['fields']['field_article_date']['settings'] = array(
-    'format_type' => 'custom_date',
+    'format_type' => 'short',
     'fromto' => 'both',
     'multiple_number' => '',
     'multiple_from' => '',

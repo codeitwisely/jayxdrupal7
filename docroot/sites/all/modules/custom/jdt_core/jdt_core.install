@@ -5,6 +5,11 @@
  * This include hook updates.
  */
 
+function jdt_core_install() {
+  jdt_core_update_7000();
+  jdt_core_update_7001();
+  jdt_core_update_7002();
+}
 /**
  * Implements jdt_core_update_7000().
  * Enable some contribs modules.
