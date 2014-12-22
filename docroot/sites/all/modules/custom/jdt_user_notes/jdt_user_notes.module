@@ -44,7 +44,7 @@ function jdt_user_notes_permission() {
 function jdt_user_notes_menu() {
   $items['jdt_user_notes/summary'] = array(
     'title' => 'Displays all notes',
-    'page callback' => 'notes_summary',
+    'page callback' => 'display_all_notes',
     'access arguments' => array('access page manager'),
     'expanded' => TRUE,
   );
