@@ -44,7 +44,7 @@ function jdt_user_notes_permission() {
 function jdt_user_notes_menu() {
   $items['jdt_user_notes/summary'] = array(
     'title' => 'Displays all notes',
-    'page callback' => 'display_all_notes',
+    'page callback' => 'notes_summary',
     'access arguments' => array('access page manager'),
     'expanded' => TRUE,
   );
@@ -77,12 +77,14 @@ function jdt_user_notes_menu() {
 }
 
 /**
- * Function to select all the article titles.
+ * Function to select all the article titles
+ * @param
+ *   String.
  */
 
 function select_all_users($string) {
 
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%:string%' AND status = 1", array(':string' => $string));
+  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
   $matches = array();
   foreach ($result as $item) {
     $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
@@ -92,17 +94,14 @@ function select_all_users($string) {
 }
 
 /**
- * Function to select all the article titles.
+ * Function to select all the article titles
+ * @param
+ *   String.
  */
 
 function select_all_articles($string) {
-  $type = 'article_1';
-  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%:string%' AND type = :type",
-    array(
-      ':type' => $type,
-      ':string' => $string,
-    )
-  );
+
+  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
   $matches = array();
   foreach ($result as $item) {
     $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
@@ -117,7 +116,7 @@ function select_all_articles($string) {
  *   Block.
  */
 
- function jdt_user_notes_block_view($block_name = "") {
+ function jdt_user_notes_block_view() {
   $form = drupal_get_form('jdt_user_notes_add_form');
   $block = array(
     'content' => $form,
@@ -126,7 +125,7 @@ function select_all_articles($string) {
 }
 
 /**
- * Custom function to add a new user note to the database.
+ * Custom function to add a new user note to the database
  * @return
  *   Form.
  */
@@ -152,11 +151,11 @@ function jdt_user_notes_add_form($form, &$form_state) {
   );
 
   $form['note_text'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Note text',
-    '#size' => 30,
-    '#maxlength' => 100,
-    '#required' => TRUE,
+      '#type' => 'textfield',
+      '#title' => 'Note text',
+      '#size' => 30,
+      '#maxlength' => 100,
+      '#required' => TRUE,
   );
 
   // now I add also a button
@@ -171,7 +170,7 @@ function jdt_user_notes_add_form($form, &$form_state) {
 
 /**
  * @return
- * Uid.
+ *   Uid
  */
 
 function get_autocomplete_user_id($field) {
@@ -182,7 +181,7 @@ function get_autocomplete_user_id($field) {
 
 /**
  * @return
- *   Nid.
+ *   Nid
  */
 function get_autocomplete_article_id($field) {
   preg_match('/\[nid:(\d+)\]/', $field, $matches);
@@ -191,7 +190,7 @@ function get_autocomplete_article_id($field) {
 }
 
 /**
- * Here we add the data to be insert on the jdt_user_notes table.
+ * Add the data to be insert on the table
  */
 
 function jdt_user_notes_submit_handler($form, &$form_state) {
@@ -205,7 +204,7 @@ function jdt_user_notes_submit_handler($form, &$form_state) {
     $article_id = get_autocomplete_article_id($form_state['values']['article_nid']);
     $author_id = get_autocomplete_user_id($form_state['values']['author_uid']);
     $text = $form_state['values']['note_text'];
-    $request = db_insert('jdt_user_notes')
+    $request = db_insert('jdt_user_notes') // Table name no longer needs {}
       ->fields(array(
         'article_nid' => $article_id,
         'author_uid' => $author_id,
@@ -221,17 +220,4 @@ function jdt_user_notes_submit_handler($form, &$form_state) {
   }
 }
 
-function display_all_notes() {
-  $query = db_select('jdt_user_notes', 'jun')
-    ->fields('jun', array('note_text'))
-    ->fields('n', array('title'))
-    ->join('node', 'n', 'jun.article_id = n.nid')
-    ->orderBy('n.nid', 'DESC')
-    ->range(0, 2);
 
-  $result = $query->execute();
-
-  while ($record = $result->fetchAssoc()) {
-    print_r($record);
-  }
-}
