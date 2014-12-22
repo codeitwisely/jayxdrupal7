@@ -6,22 +6,219 @@
  */
 
 /**
- * Implements jdt_user_notes_permissions().
+ * Implements hook_permission().
+ * @return
+ *   Array of permissions.
  */
 function jdt_user_notes_permission() {
   return array(
-    'jdt_user_notes' => array(
-      'title' => t('Administer jdt user notes module'),
-      'description' => t('Perform administration tasks for jdt_user_notes modules.'),
+    'add_jdt_user_notes' => array(
+      'title' => t('Create new user note'),
+      'description' => t('Add user notes.'),
+    ),
+    'edit_own_jdt_user_notes' => array(
+      'title' => t('Edit own user note'),
+      'description' => t('Edit own user notes.'),
+    ),
+    'edit_any_jdt_user_notes' => array(
+      'title' => t('Edit any user note'),
+      'description' => t('Edit any user notes.'),
+    ),
+    'delete_own_jdt_user_notes' => array(
+      'title' => t('Delete own user note'),
+      'description' => t('Delete own user notes.'),
+    ),
+    'delete_any_jdt_user_notes' => array(
+      'title' => t('Delete any user note'),
+      'description' => t('Delete any user notes.'),
     ),
   );
 }
 
 /**
- * Implements jdt_user_notes_simpletest().
+ * Implements hook_menu().
+ * @return
+ *   Array of items.
  */
-function jdt_user_notes_simpletest() {
-  $dir = drupal_get_path('module', 'jdt_user_notes');
-  $tests = file_scan_directory($dir, '\.test$');
-  return array_keys($tests);
+
+function jdt_user_notes_menu() {
+  $items['jdt_user_notes/summary'] = array(
+    'title' => 'Displays all notes',
+    'page callback' => 'notes_summary',
+    'access arguments' => array('access page manager'),
+    'expanded' => TRUE,
+  );
+  $items['jdt-user-notes/update'] = array(
+    'title' => 'Update a note',
+    'page callback' => 'notes_update',
+    'access arguments' => array('access page manager'),
+    'expanded' => TRUE,
+  );
+  $items['jdt_user_notes/add'] = array(
+    'title' => 'Add a user note',
+    'description' => 'Add a new user note',
+    'page callback' => 'jdt_user_notes_block_view',
+    'access arguments' => array('access page manager'),
+    'expanded' => TRUE,
+  );
+  $items['article/autocomplete'] = array(
+    'title' => 'AutoComp Menu',
+    'page callback' => 'select_all_articles',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['user_un/autocomplete'] = array(
+    'title' => 'AutoComp Menu',
+    'page callback' => 'select_all_Users',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
 }
+
+/**
+ * Function to select all the article titles
+ */
+
+function select_all_users($string) {
+
+  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%:string%' AND status = 1", array(':string' => $string));
+  $matches = array();
+  foreach ($result as $item) {
+    $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
+  }
+  drupal_json_output($matches);
+  exit;
+}
+
+/**
+ * Function to select all the article titles
+ */
+
+function select_all_articles($string) {
+  $type = 'article_1';
+  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%:string%' AND type = :type",
+    array(
+      ':type' => $type,
+      ':string' => $string,
+    )
+  );
+  $matches = array();
+  foreach ($result as $item) {
+    $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
+  }
+  drupal_json_output($matches);
+  exit;
+}
+
+/**
+ * Implements hook_block_view().
+ * @return
+ *   Block.
+ */
+
+ function jdt_user_notes_block_view($block_name = "") {
+  $form = drupal_get_form('jdt_user_notes_add_form');
+  $block = array(
+    'content' => $form,
+  );
+  return $block;
+}
+
+/**
+ * Custom function to add a new user note to the database
+ * @return
+ *   Form.
+ */
+
+function jdt_user_notes_add_form($form, &$form_state) {
+
+  $form['article_nid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Article'),
+    '#size' => 30,
+    '#maxlength' => 100,
+    '#autocomplete_path' => 'article/autocomplete',
+    '#required' => TRUE,
+  );
+
+  $form['author_uid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Authored by'),
+    '#size' => 30,
+    '#maxlength' => 100,
+    '#autocomplete_path' => 'user_un/autocomplete',
+    '#required' => TRUE,
+  );
+
+  $form['note_text'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Note text',
+      '#size' => 30,
+      '#maxlength' => 100,
+      '#required' => TRUE,
+  );
+
+  // now I add also a button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add user note'),
+  );
+
+  $form['#submit'][] = 'jdt_user_notes_submit_handler';
+  return $form;
+}
+
+/**
+ * @return
+ *   Uid
+ */
+
+function get_autocomplete_user_id($field) {
+  preg_match('/\[uid:(\d+)\]/', $field, $matches);
+  $uid = $matches[1];
+  return $uid;
+}
+
+/**
+ * @return
+ *   Nid
+ */
+function get_autocomplete_article_id($field) {
+  preg_match('/\[nid:(\d+)\]/', $field, $matches);
+  $nid = $matches[1];
+  return $nid;
+}
+
+/**
+ * Add the data to be insert on the table
+ */
+
+function jdt_user_notes_submit_handler($form, &$form_state) {
+
+  $error = 1;
+    if ( !isset($form_state['values']['note_text']) || $form_state['values']['note_text'] > 0) {
+    $error = 0 ;
+  }
+
+  if ($error) {
+    $article_id = get_autocomplete_article_id($form_state['values']['article_nid']);
+    $author_id = get_autocomplete_user_id($form_state['values']['author_uid']);
+    $text = $form_state['values']['note_text'];
+    $request = db_insert('jdt_user_notes') // Table name no longer needs {}
+      ->fields(array(
+        'article_nid' => $article_id,
+        'author_uid' => $author_id,
+        'note_text' => $text,
+      ))
+      ->execute();
+    if ($request) {
+      drupal_set_message(t('Record has been added!'));
+    }
+    else {
+      drupal_set_message(t('Record cant be added!'), 'warning');
+    }
+  }
+}
+
+
