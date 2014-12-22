@@ -62,9 +62,9 @@ function jdt_content_type_article_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'date_format_custom_date';
-  $strongarm->value = 'F j, Y - H:i';
-  $export['date_format_custom_date'] = $strongarm;
+  $strongarm->name = 'date_format_short';
+  $strongarm->value = 'F j, Y';
+  $export['date_format_short'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
