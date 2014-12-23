@@ -361,6 +361,7 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
 -----------------------------------------------------*/
 
 /**
+ * Implements hook_block_info().
  * @return
  *   A block information.
  */
@@ -372,6 +373,7 @@ function jdt_user_notes_block_info() {
 }
 
 /**
+ * Implements hook_block_view().
  * @param
  *   $delta
  * @return
