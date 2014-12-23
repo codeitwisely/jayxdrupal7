@@ -351,3 +351,23 @@ function jdt_user_notes_submit_handler($form, &$form_state) {
   }
 }
 
+/**
+ * Implements hook_theme().
+ * @return
+ * Array().
+ */
+
+function jdt_article_notes_theming_theme() {
+return array(
+// PLACEHOLDERS to hold initial values
+'jdt-article-notes' => array(
+'variables' => array(
+'NOTE_TEXT' => 'Test Note linked to test node',
+'NODE_TITLE' => 'Test Node',
+'NODE_AUTHOR' => 'Test Node Author',
+),
+'template' => 'theme/jdt_article_notes_theming',
+),
+);
+}
+
