@@ -61,6 +61,13 @@ function jdt_user_notes_menu() {
     'access arguments' => array('access page manager'),
     'expanded' => TRUE,
   );
+  $items['note/%'] = array(
+    'title' => 'Add a user note',
+    'access_callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('Create new user note'),
+    'page_arguments' => array('jdt_user_notes_form_definition', 1),
+  );
   $items['article/autocomplete'] = array(
     'title' => 'AutoComp Menu',
     'page callback' => 'select_all_articles',
@@ -69,12 +76,110 @@ function jdt_user_notes_menu() {
   );
   $items['user_un/autocomplete'] = array(
     'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_Users',
+    'page callback' => 'select_all_users',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
   return $items;
 }
+
+/**
+ * BEGIN TEST with wildcard.
+ */
+
+/**
+* Form definition. for updating a note.
+*/
+function jdt_user_notes_form_definition($form, &$form_state, $nid) {
+  global $user;
+  $user_id = $user->uid;
+
+  $default_value_note = jdt_user_notes_note_exists($nid, $user_id);
+  $default_note_id = jdt_user_notes_note_id($nid, $user_id);
+  $form['fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Note to Article'),
+    '#default_value' => 'Hello',
+  );
+  $form['fieldset']['note_textfield'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Note'),
+    '#default_value' => $default_value_note,
+  );
+
+  // Grab value for node id and make it part of the form state.
+  // so you can use it later.
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $nid,
+  );
+
+  // Make User ID available to the form.
+  $form['uid'] = array(
+    '#type' => 'value',
+    '#value' => $user_id,
+  );
+  // Make User ID available to the form.
+  $form['note_id'] = array(
+    '#type' => 'value',
+    '#value' => $default_note_id,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Note'),
+  );
+  return $form;
+}
+/**
+* Grab Note from the database.
+*/
+function jdt_user_notes_note_exists($nid, $uid) {
+// Grab values from the database.
+// Populate default value with the value stored.
+// in the database.
+  $result = db_select('jdt_user_notes', 'n')
+    ->fields('n')
+    ->condition('article_nid', $nid, "=")
+    ->condition('author_uid', $uid, "=")
+    ->execute()
+    ->fetchAssoc();
+  if(isset($result['note_text'])) {
+    return $result['note_text'];
+  }
+  return '';
+}
+/**
+* Grab Note Id from the database.
+*/
+function jdt_user_notes_note_id($nid, $uid) {
+  $result = db_select('jdt_user_notes', 'n')
+    ->fields('n')
+    ->condition('article_nid', $nid, "=")
+    ->condition('author_uid', $uid, "=")
+    ->execute()
+    ->fetchAssoc();
+    return $result['note_id'];
+  }
+/**
+ * Submit handler.
+ */
+function jdt_user_notes_form_definition_submit($form, &$form_state) {
+  $values = $form_state['values'];
+//dpm($values);
+  $entry = array(
+    'note_text' => $form_state['values']['note_textfield'],
+    'author_uid' => $form_state['values']['uid'],
+    'article_nid' => $form_state['values']['nid'],
+    'note_id' => $form_state['values']['note_id'],
+  );
+  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+  jdt_user_notes_updt($entry);
+  drupal_set_message(t('Your note has been added'));
+}
+
+/**
+ * FIN TESSST of update part
+ */
 
 /**
  * Function to select all the article titles
@@ -125,7 +230,23 @@ function select_all_articles($string) {
 }
 
 /**
+ * get current user
+ */
+function get_current_user_custom() {
+  global $user;
+  $user_id = $user->uid;
+  $user_name = $user->name;
+  $field_user = $user_name . '[uid:' . $user_id . ']';
+
+  return $field_user;
+}
+
+/**
  * Custom function to add a new user note to the database
+ * @param
+ *   $form
+ * @param
+ *   $form_state
  * @return
  *   Form.
  */
@@ -146,7 +267,7 @@ function jdt_user_notes_add_form($form, &$form_state) {
     '#title' => t('Authored by'),
     '#size' => 30,
     '#maxlength' => 100,
-    '#autocomplete_path' => 'user_un/autocomplete',
+    '#default_value' => get_current_user_custom(),
     '#required' => TRUE,
   );
 
@@ -169,6 +290,8 @@ function jdt_user_notes_add_form($form, &$form_state) {
 }
 
 /**
+ * @param
+ *   $field.
  * @return
  *   Uid
  */
@@ -180,6 +303,8 @@ function get_autocomplete_user_id($field) {
 }
 
 /**
+ * @param
+ *   $field.
  * @return
  *   Nid
  */
@@ -191,6 +316,10 @@ function get_autocomplete_article_id($field) {
 
 /**
  * Add the data to be insert on the table
+ * @param
+ *   $form
+ * @param
+ *   $form_state
  */
 
 function jdt_user_notes_submit_handler($form, &$form_state) {
@@ -204,20 +333,21 @@ function jdt_user_notes_submit_handler($form, &$form_state) {
     $article_id = get_autocomplete_article_id($form_state['values']['article_nid']);
     $author_id = get_autocomplete_user_id($form_state['values']['author_uid']);
     $text = $form_state['values']['note_text'];
-    $request = db_insert('jdt_user_notes') // Table name no longer needs {}
-      ->fields(array(
+    $entry = array(
         'article_nid' => $article_id,
         'author_uid' => $author_id,
         'note_text' => $text,
-      ))
-      ->execute();
-    if ($request) {
+    );
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    $add = jdt_user_notes_create($entry);
+
+    if ($add) {
       drupal_set_message(t('Record has been added!'));
+      drupal_goto('<front>');
     }
     else {
-      drupal_set_message(t('Record cant be added!'), 'warning');
+      drupal_set_message(t('Record can\'t be added!'), 'warning');
     }
   }
 }
-
 
