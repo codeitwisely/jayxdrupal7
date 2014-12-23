@@ -225,13 +225,13 @@ function select_all_articles($string) {
  *   Block.
  */
 
- function jdt_user_notes_block_view() {
-  $form = drupal_get_form('jdt_user_notes_add_form');
-  $block = array(
-    'content' => $form,
-  );
-  return $block;
-}
+//  function jdt_user_notes_block_view() {
+//   $form = drupal_get_form('jdt_user_notes_add_form');
+//   $block = array(
+//     'content' => $form,
+//   );
+//   return $block;
+// }
 
 /**
  * get current user
@@ -354,5 +354,78 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
       drupal_set_message(t('Record can\'t be added!'), 'warning');
     }
   }
+}
+
+/*----------------------------------------------------
+----------------TASK 25-------------------------------
+-----------------------------------------------------*/
+
+/**
+ * @return
+ *   A block information.
+ */
+function jdt_user_notes_block_info() {
+  $blocks['articles_info'] = array(
+    'info' => t('Article Notes Information')
+  );
+  return $blocks;
+}
+
+/**
+ * @param
+ *   $delta
+ * @return
+ *   A block information.
+ */
+function jdt_user_notes_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'articles_info':
+      $block['subject'] = t('Site Information');
+      $block['content'] = _jdt_user_notes_content_number();
+    break;
+  }
+  return $block;
+}
+
+/**
+ * @return
+ *   A block information.
+ */
+function _jdt_user_notes_content_number() {
+  $number_of_articles = _jdt_user_notes_number_articles();
+  $number_of_notes = _jdt_user_notes_number_notes();
+  $number_of_users = _jdt_user_notes_number_users();
+
+  return "Number of Articles: ".$number_of_articles."<br />".
+    "Number of Notes: ".$number_of_notes."<br />".
+    "Number of Users: ".$number_of_users;
+}
+
+/**
+ * @return
+ *   Return Number of Articles on the site.
+ */
+function _jdt_user_notes_number_articles() {
+  $number_of_articles = db_query("SELECT count(nid) FROM {node} WHERE node.type='article_1'")->fetchField();
+  return $number_of_articles;
+}
+
+/**
+ * @return
+ *   Return Number of Notes on the site.
+ */
+function _jdt_user_notes_number_notes() {
+  $number_of_notes = db_query("SELECT count(note_id) FROM {jdt_user_notes}")->fetchField();
+  return $number_of_notes;
+}
+
+/**
+ * @return
+ *   Return Number of Authenticated Users on the site.
+ */
+function _jdt_user_notes_number_users() {
+  $number_of_users = db_query("SELECT count(uid) FROM {users} WHERE users.status=1")->fetchField();
+  return $number_of_users;
 }
 
