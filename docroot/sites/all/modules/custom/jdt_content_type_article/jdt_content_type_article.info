@@ -49,5 +49,5 @@ features[variable][] = node_submitted_article_1
 features[views_view][] = view_for_articles
 features_exclude[dependencies][ctools] = ctools
 features_exclude[dependencies][options] = options
-mtime = 1419250992
+mtime = 1419271460
 project path = sites/all/modules/custom
