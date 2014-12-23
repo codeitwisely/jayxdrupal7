@@ -80,6 +80,16 @@ function jdt_user_notes_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+  // Display the My Notes tab only if notes exist.
+  $items['node/%node/note'] = array(
+    'title' => 'My Notes',
+    'description' => 'Display articles related to an article',
+    'page callback' => 'jdt_user_notes_display_notes',
+    'page arguments' => array(1),
+    'access callback' => 'jdt_user_notes_note_exist',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+  );
   return $items;
 }
 
@@ -230,7 +240,9 @@ function select_all_articles($string) {
 }
 
 /**
- * get current user
+ * get current user.
+ * @return
+ *   User[uid:uidnumber].
  */
 function get_current_user_custom() {
   global $user;
@@ -354,20 +366,19 @@ function jdt_user_notes_submit_handler($form, &$form_state) {
 /**
  * Implements hook_theme().
  * @return
- * Array().
+ * Array.
  */
 
-function jdt_article_notes_theming_theme() {
-return array(
-// PLACEHOLDERS to hold initial values
-'jdt-article-notes' => array(
-'variables' => array(
-'NOTE_TEXT' => 'Test Note linked to test node',
-'NODE_TITLE' => 'Test Node',
-'NODE_AUTHOR' => 'Test Node Author',
-),
-'template' => 'theme/jdt_article_notes_theming',
-),
-);
+function jdt_user_notes_theme() {
+  return array(
+    'jdt-article-notes' => array(
+      'variables' => array(
+      'NOTE_TEXT' => 'Test Note linked to test node',
+      'NODE_TITLE' => 'Test Node',
+      'NODE_AUTHOR' => 'Test Node Author',
+      ),
+      'template' => 'theme/dt_custom',
+    ),
+  );
 }
 
