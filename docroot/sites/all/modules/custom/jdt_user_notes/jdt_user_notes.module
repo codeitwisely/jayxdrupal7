@@ -78,12 +78,6 @@ function _jdt_user_notes_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  $items['user_un/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_users',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
   return $items;
 }
 
@@ -184,23 +178,6 @@ function _jdt_user_notes_form_definition_submit($form, &$form_state) {
 /**
  * FIN TESSST of update part
  */
-
-/**
- * Function to select all the article titles
- * @param
- *   String.
- */
-
-function select_all_users($string) {
-
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
-  }
-  drupal_json_output($matches);
-  exit;
-}
 
 /**
  * Function to select all the article titles
@@ -361,6 +338,7 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
 -----------------------------------------------------*/
 
 /**
+ * Implements hook_block_info().
  * @return
  *   A block information.
  */
@@ -372,6 +350,7 @@ function jdt_user_notes_block_info() {
 }
 
 /**
+ * Implements hook_block_view().
  * @param
  *   $delta
  * @return
@@ -379,6 +358,8 @@ function jdt_user_notes_block_info() {
  */
 function jdt_user_notes_block_view($delta = '') {
   $block = array();
+  // $form = drupal_get_form('_jdt_user_notes_add_form');
+  // $block['content'] = $form;
   switch ($delta) {
     case 'articles_info':
       $block['subject'] = t('Site Information');
@@ -407,7 +388,13 @@ function _jdt_user_notes_content_number() {
  *   Return Number of Articles on the site.
  */
 function _jdt_user_notes_number_articles() {
-  $number_of_articles = db_query("SELECT count(nid) FROM {node} WHERE node.type='article_1'")->fetchField();
+  $type = 'article_1';
+  $query = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('n.type', $type);
+
+  $number_of_articles = $query->countQuery()->execute()->fetchField();
+
   return $number_of_articles;
 }
 
@@ -416,16 +403,24 @@ function _jdt_user_notes_number_articles() {
  *   Return Number of Notes on the site.
  */
 function _jdt_user_notes_number_notes() {
-  $number_of_notes = db_query("SELECT count(note_id) FROM {jdt_user_notes}")->fetchField();
+  $query = db_select('jdt_user_notes', 'jun')
+    ->fields('jun', array('note_id'));
+  $number_of_notes = $query->countQuery()->execute()->fetchField();
+
   return $number_of_notes;
 }
 
 /**
  * @return
- *   Return Number of Authenticated Users on the site.
+ *   Return number of active users on the site.
  */
 function _jdt_user_notes_number_users() {
-  $number_of_users = db_query("SELECT count(uid) FROM {users} WHERE users.status=1")->fetchField();
+  $status = 1;
+  $query = db_select('users', 'u')
+    ->fields('u', array('uid'))
+    ->condition('u.status', $status);
+  $number_of_users = $query->countQuery()->execute()->fetchField();
+
   return $number_of_users;
 }
 
