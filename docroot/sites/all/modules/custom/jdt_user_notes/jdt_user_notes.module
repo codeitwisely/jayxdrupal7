@@ -409,7 +409,13 @@ function _jdt_user_notes_content_number() {
  *   Return Number of Articles on the site.
  */
 function _jdt_user_notes_number_articles() {
-  $number_of_articles = db_query("SELECT count(nid) FROM {node} WHERE node.type='article_1'")->fetchField();
+  $type = 'article_1';
+  $query = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('n.type', $type);
+
+  $number_of_articles = $query->countQuery()->execute()->fetchField();
+
   return $number_of_articles;
 }
 
@@ -418,16 +424,24 @@ function _jdt_user_notes_number_articles() {
  *   Return Number of Notes on the site.
  */
 function _jdt_user_notes_number_notes() {
-  $number_of_notes = db_query("SELECT count(note_id) FROM {jdt_user_notes}")->fetchField();
+  $query = db_select('jdt_user_notes', 'jun')
+    ->fields('jun', array('note_id'));
+  $number_of_notes = $query->countQuery()->execute()->fetchField();
+
   return $number_of_notes;
 }
 
 /**
  * @return
- *   Return Number of Authenticated Users on the site.
+ *   Return number of active users on the site.
  */
 function _jdt_user_notes_number_users() {
-  $number_of_users = db_query("SELECT count(uid) FROM {users} WHERE users.status=1")->fetchField();
+  $status = 1;
+  $query = db_select('users', 'u')
+    ->fields('u', array('uid'))
+    ->condition('u.status', $status);
+  $number_of_users = $query->countQuery()->execute()->fetchField();
+
   return $number_of_users;
 }
 
