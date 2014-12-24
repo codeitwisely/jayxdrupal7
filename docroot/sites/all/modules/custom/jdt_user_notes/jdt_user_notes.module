@@ -78,12 +78,6 @@ function _jdt_user_notes_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  $items['user_un/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_users',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
   return $items;
 }
 
@@ -191,23 +185,6 @@ function _jdt_user_notes_form_definition_submit($form, &$form_state) {
  *   String.
  */
 
-function select_all_users($string) {
-
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
-  }
-  drupal_json_output($matches);
-  exit;
-}
-
-/**
- * Function to select all the article titles
- * @param
- *   String.
- */
-
 function select_all_articles($string) {
 
   $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
@@ -236,7 +213,7 @@ function select_all_articles($string) {
 /**
  * get current user
  */
-function get_current_user_custom() {
+function _jdt_user_notes_get_user() {
   global $user;
   $user_id = $user->uid;
   $user_name = $user->name;
@@ -255,7 +232,7 @@ function get_current_user_custom() {
  *   Form.
  */
 
-function jdt_user_notes_add_form($form, &$form_state) {
+function _jdt_user_notes_add_form($form, &$form_state) {
 
   $form['article_nid'] = array(
     '#type' => 'textfield',
@@ -271,7 +248,7 @@ function jdt_user_notes_add_form($form, &$form_state) {
     '#title' => t('Authored by'),
     '#size' => 30,
     '#maxlength' => 100,
-    '#default_value' => get_current_user_custom(),
+    '#default_value' => _jdt_user_notes_get_user(),
     '#disabled' => TRUE,
     '#required' => TRUE,
   );
@@ -381,6 +358,8 @@ function jdt_user_notes_block_info() {
  */
 function jdt_user_notes_block_view($delta = '') {
   $block = array();
+  $form = drupal_get_form('_jdt_user_notes_add_form');
+  $block['content'] = $form;
   switch ($delta) {
     case 'articles_info':
       $block['subject'] = t('Site Information');
