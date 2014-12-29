@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * jdt_core.install
+ * jdt_core.install.
  * This include hook updates.
  */
 
@@ -11,17 +11,17 @@ function jdt_core_install() {
   jdt_core_update_7002();
 }
 /**
- * Implements jdt_core_update_7000().
+ * Implements hook_update_N().
  * Enable some contribs modules.
  */
 function jdt_core_update_7000() {
   // Array of modules that we want to enable.
-  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "date", "field_group", "references", "views_ui");
+  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "coder", "date", "field_group", "references", "views_ui");
   module_enable($module_list);
 }
 
 /**
- * Implements jdt_core_update_7001().
+ * Implements hook_update_N().
  * Disable some contrib modules.
  */
 function jdt_core_update_7001() {
@@ -31,7 +31,7 @@ function jdt_core_update_7001() {
 }
 
 /**
- * Implements jdt_core_update_7002().
+ * Implements hook_update_N().
  * Enable the jdt_content_type_article feature.
  */
 function jdt_core_update_7002() {
