@@ -46,6 +46,14 @@ function jdt_user_notes_permission() {
  */
 
 function jdt_user_notes_menu() {
+  //New menu item to add an article.
+  $items['jdt_user_note/add/%node'] = array(
+    'title' => 'Add user note',
+    'description' => 'Add a new user note',
+    'page callback' => '_jdt_user_notes_callback_test',
+    'access arguments' => array('access page manager'),
+    'expanded' => TRUE,
+  );
   $items['jdt_user_notes/summary'] = array(
     'title' => 'Displays all notes',
     'page callback' => '_jdt_user_notes_get_all_notes',
@@ -64,9 +72,13 @@ function jdt_user_notes_menu() {
     'access arguments' => array('access page manager'),
     'expanded' => TRUE,
   );
-  $items['jdt_user_notes/delete'] = array(
+  $items['jdt_user_notes/delete/%'] = array(
     'title' => 'Delete Note',
-    'page callback' => '_jdt_user_notes_delete_note',
+    'access arguments' => array('access page manager'),
+    'access_callback' => TRUE,
+    'expanded' => TRUE,
+    'page_arguments' => array('_jdt_user_notes_delete_note', 2),
+    'expanded' => TRUE,
   );
   $items['note/%'] = array(
     'title' => 'Add a user note',
@@ -211,9 +223,9 @@ function _jdt_user_notes_all_users($string) {
  *   String.
  */
 
-function _jdt_user_notes_all_articles($string) {
+function _jdt_user_notes_select_all_articles($title) {
 
-  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
+  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$title%' AND type ='article_1'");
   $matches = array();
   foreach ($result as $item) {
     $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
@@ -381,7 +393,7 @@ function _jdt_user_notes_get_all_notes($type = 'article_1') {
     $rows[] = array_map('check_plain', (array)$record);
     //Make some hyperlinks for editing and deleting
     $rows[$i]['edit'] = l(t('Edit'), 'jdt_user_notes/update', array('query' => array('note_id' => $rows[$i]['note_id'])));
-    $rows[$i]['delete'] = l(t('Delete'), 'jdt_user_notes/delete', array('query' => array('note_id' => $rows[$i]['note_id'])));
+    $rows[$i]['delete'] = l(t('Delete'), 'jdt_user_notes/delete/'.$rows[$i]['note_id']);
     $i++;
   }
   $header = array(t('Note Id'), t('Article'), t('Author'), t('Note text'), t('Edit'), t('Delete'));
@@ -407,4 +419,8 @@ function _jdt_user_notes_delete_note($note) {
   else {
     drupal_set_message(t('Note can\'t be deleted!'), 'warning');
   }
+}
+
+function _jdt_user_notes_callback_test($node) {
+
 }

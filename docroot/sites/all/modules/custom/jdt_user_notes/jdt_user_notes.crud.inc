@@ -1,8 +1,8 @@
 <?php
 /**
+ * Implementation of CRUD FUNCTIONS.
  * @file
  * jdt_user_notes.crud.inc.
- * Implementation of CRUD FUNCTIONS.
  */
 
 /**
@@ -26,6 +26,25 @@ function _jdt_user_notes_select($user) {
   return $result;
 }
 
+/**
+ * Function to return the details for a note.
+ * @param
+ *   The note_id
+ * @return
+ *   Return the database entry for the note_id in parameters.
+ */
+function _jdt_user_notes_select($note_id) {
+  $query = db_select('jdt_user_notes', 'jun')
+    ->fields('u', array('author_uid',''))
+    ->fields('jun', array('note_text'))
+    ->join('node', 'n', 'jun.article_nid = n.nid')
+    ->join('users', 'u', 'jun.author_uid = u.uid')
+    ->condition('n.type', 'article_1', '=')
+    ->condition('jun.note_id', $note_id, '=');
+  $result = $query->execute()->fetchAssoc();
+
+  return $result;
+}
 /**
  * Function to delete a note.
  * @param
