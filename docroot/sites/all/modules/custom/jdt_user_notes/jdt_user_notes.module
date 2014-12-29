@@ -56,6 +56,7 @@ function jdt_user_notes_menu() {
     'title' => 'Update a note',
     'page callback' => 'drupal_get_form',
     'page_arguments' => array('_jdt_user_notes_form_definition'),
+    'access arguments' => array('access page manager'),
   );
   $items['jdt_user_notes/add'] = array(
     'title' => 'Add user note',
@@ -67,6 +68,8 @@ function jdt_user_notes_menu() {
   $items['jdt_user_notes/delete'] = array(
     'title' => 'Delete Note',
     'page callback' => '_jdt_user_notes_delete_note',
+    'access arguments' => array('access page manager'),
+    'expanded' => TRUE,
   );
   $items['note/%'] = array(
     'title' => 'Add a user note',
