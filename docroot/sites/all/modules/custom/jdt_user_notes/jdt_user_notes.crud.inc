@@ -10,7 +10,7 @@
  * @return
  *   Array
  */
-function jdt_user_notes_entry_select() {
+function _jdt_user_notes_entry_select() {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('jun');
   $result = $query->execute()->fetchAssoc();
@@ -24,7 +24,7 @@ function jdt_user_notes_entry_select() {
  * @return
  *   Array
  */
-function jdt_user_notes_del($entry = array()) {
+function _jdt_user_notes_del($entry = array()) {
   try {
   $query = db_delete('jdt_user_notes')
     ->condition('note_id', $entry['note_id']);
@@ -44,7 +44,7 @@ function jdt_user_notes_del($entry = array()) {
  *   Array
  * Function to update a note.
  */
-function jdt_user_notes_updt($entry = array()) {
+function _jdt_user_notes_updt($entry = array()) {
   try {
     $count = db_update('jdt_user_notes')
       ->fields($entry)
@@ -65,7 +65,7 @@ function jdt_user_notes_updt($entry = array()) {
  *   Array
  * Function to Add Note.
  */
-function jdt_user_notes_create($entry = array()) {
+function _jdt_user_notes_create($entry = array()) {
   $return_value = NULL;
   try{
     $return_value = db_insert('jdt_user_notes')
