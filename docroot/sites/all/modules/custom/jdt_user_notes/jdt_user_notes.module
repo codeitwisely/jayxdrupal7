@@ -361,6 +361,13 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
   }
 }
 
+/**
+ * This function displays all the notes on a table.
+ * @param
+ *   The content type.
+ * @return
+ *   The table with the notes.
+ */
 function _jdt_user_notes_get_all_notes($type = 'article_1') {
   $result = db_query('SELECT jun.note_id, n.title, u.name, jun.note_text
     FROM jdt_user_notes jun
@@ -384,6 +391,11 @@ function _jdt_user_notes_get_all_notes($type = 'article_1') {
   return $output;
 }
 
+/**
+ * This function call the delete function from the crud file to delete a specific note.
+ * @param
+ *   Note to be deleted.
+ */
 function _jdt_user_notes_delete_note($note) {
   $note = $_GET['note_id'];
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
@@ -393,6 +405,6 @@ function _jdt_user_notes_delete_note($note) {
     drupal_goto('jdt_user_notes/summary');
   }
   else {
-      drupal_set_message(t('Note can\'t be deleted!'), 'warning');
-    }
+    drupal_set_message(t('Note can\'t be deleted!'), 'warning');
+  }
 }
