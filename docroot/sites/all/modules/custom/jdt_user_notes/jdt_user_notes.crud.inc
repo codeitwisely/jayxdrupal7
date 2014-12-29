@@ -55,13 +55,13 @@ function _jdt_user_notes_del_note($note_id) {
  * @param
  *   The note_id to be updated.
  * @return
- *   Return the number of updated rows
+ *   Return the number of updated rows.
  */
-function _jdt_user_notes_updt_note($note_id) {
+function _jdt_user_notes_updt_note($entry = array()) {
   try {
     $query = db_update('jdt_user_notes', 'jun')
       ->fields($entry)
-      ->condition('jun.note_id', $note_id, '=');
+      ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
 
     return $result;
@@ -78,10 +78,9 @@ function _jdt_user_notes_updt_note($note_id) {
  * @param
  *   Array of fields to insert on the DB.
  * @return
- *   Return the number of inserted rows on the table.
+ *   Return the last id inserted on the table.
  */
 function _jdt_user_notes_create_note($entry = array()) {
-  $return_value = NULL;
   try{
     $return_value = db_insert('jdt_user_notes')
       ->fields($entry)
