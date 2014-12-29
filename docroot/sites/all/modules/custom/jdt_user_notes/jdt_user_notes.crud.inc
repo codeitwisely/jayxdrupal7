@@ -1,68 +1,82 @@
 <?php
 /**
  * @file
- * jdt_user_notes.crud.inc
+ * jdt_user_notes.crud.inc.
  * Implementation of CRUD FUNCTIONS.
  */
 
 /**
  * Function to read notes from the db.
+ * @param
+ *   The user for who we want to display results.
  * @return
- *   Array
+ *   Array.
  */
-function _jdt_user_notes_entry_select() {
+function _jdt_user_notes_select($user) {
   $query = db_select('jdt_user_notes', 'jun')
-    ->fields('jun');
+    ->fields('u', array('name'))
+    ->fields('n', array('title'))
+    ->fields('jun', array('note_text'))
+    ->join('node', 'n', 'jun.article_nid = n.nid')
+    ->join('users', 'u', 'jun.author_uid = u.uid')
+    ->condition('n.type', 'article_1', '=')
+    ->condition('u.uid', $user, '=');
   $result = $query->execute()->fetchAssoc();
+
   return $result;
 }
 
 /**
  * Function to delete a note.
  * @param
- *   Array of fields
+ *   Array of fields.
  * @return
- *   Array
+ *   The query or false.
  */
 function _jdt_user_notes_del($entry = array()) {
   try {
-  $query = db_delete('jdt_user_notes')
-    ->condition('note_id', $entry['note_id']);
+    $query = db_delete('jdt_user_notes')
+      ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
+
+    return $result;
   }
   catch (Exception $e) {
     watchdog(t('Failed to delete record in database. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-  return $result;
+
+  return FALSE;
 }
 
 /**
  * @param
- *   Array of fields
+ *   Array of fields to update.
  * @return
- *   Array
+ *   Query.
  * Function to update a note.
  */
 function _jdt_user_notes_updt($entry = array()) {
   try {
-    $count = db_update('jdt_user_notes')
+    $query = db_update('jdt_user_notes')
       ->fields($entry)
-      ->condition('note_id', $entry['note_id'])
-      ->execute();
+      ->condition('note_id', $entry['note_id']);
+    $result = $query->execute();
+
+    return $result;
   }
   catch (Exception $e) {
     watchdog(t('Failed to update database. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-  return $count;
+  return FALSE;
 }
 
 /**
  * @param
- *   Array of fields
+ *   Array of fields to insert on the DB.
  * @return
- *   Array
+ *   FALSE.
  * Function to Add Note.
  */
 function _jdt_user_notes_create($entry = array()) {
@@ -71,10 +85,12 @@ function _jdt_user_notes_create($entry = array()) {
     $return_value = db_insert('jdt_user_notes')
       ->fields($entry)
       ->execute();
+
+      return $return_value;
   }
   catch (Exception $e) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-  return $return_value;
+  return FALSE;
 }
