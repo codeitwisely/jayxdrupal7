@@ -6,15 +6,14 @@
  */
 
 /**
- * Function to return a database entry for the jdt_user_notes table.
+ * Function to return a table entry for the jdt_user_notes table.
  * According to the note_id.
  * @param
  *   The note_id for which we want to see db entry.
  * @return
  *   Jdt_user_notes table entry.
  */
-
-function _jdt_user_notes_select_notes($note_id) {
+function _jdt_user_notes_select_note($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('u', array('name'))
     ->fields('n', array('title'))
@@ -31,14 +30,14 @@ function _jdt_user_notes_select_notes($note_id) {
 /**
  * Function to delete a note.
  * @param
- *   A note_id
+ *   The note_id to delete.
  * @return
- *   A new DeleteQuery object for this connection.(Note delete)
+ *   Return the number of deleted rows.
  */
 function _jdt_user_notes_del_note($note_id) {
   try {
-    $query = db_delete('jdt_user_notes', 'jun')
-      ->condition('jun.note_id', $note_id, '=');
+    $query = db_delete('jdt_user_notes')
+      ->condition('note_id', $note_id, '=');
     $result = $query->execute();
 
     return $result;
@@ -56,13 +55,13 @@ function _jdt_user_notes_del_note($note_id) {
  * @param
  *   The note_id to be updated.
  * @return
- *   UpdateQuery A new UpdateQuery object for this connection.(Note update).
+ *   Return the number of updated rows
  */
-function _jdt_user_notes_updt($note_id) {
+function _jdt_user_notes_updt_note($note_id) {
   try {
-    $query = db_update('jdt_user_notes')
+    $query = db_update('jdt_user_notes', 'jun')
       ->fields($entry)
-      ->condition('note_id', $entry['note_id']);
+      ->condition('jun.note_id', $note_id, '=');
     $result = $query->execute();
 
     return $result;
@@ -75,13 +74,13 @@ function _jdt_user_notes_updt($note_id) {
 }
 
 /**
+ * Function to add a note to an existing Article.
  * @param
  *   Array of fields to insert on the DB.
  * @return
- *   FALSE.
- * Function to Add Note.
+ *   Return the number of inserted rows on the table.
  */
-function _jdt_user_notes_create($entry = array()) {
+function _jdt_user_notes_create_note($entry = array()) {
   $return_value = NULL;
   try{
     $return_value = db_insert('jdt_user_notes')
