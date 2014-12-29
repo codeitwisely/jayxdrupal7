@@ -38,15 +38,12 @@ function _jdt_user_notes_del($entry = array()) {
     $query = db_delete('jdt_user_notes')
       ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
-
-    return $result;
   }
   catch (Exception $e) {
     watchdog(t('Failed to delete record in database. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-
-  return FALSE;
+  return $result;
 }
 
 /**
