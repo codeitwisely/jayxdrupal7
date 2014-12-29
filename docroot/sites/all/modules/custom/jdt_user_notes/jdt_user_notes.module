@@ -10,7 +10,7 @@
  * @return
  *   Array of permissions.
  */
-function _jdt_user_notes_permission() {
+function jdt_user_notes_permission() {
   return array(
     'view_jdt_user_notes' => array(
       'title' => t('View any user note'),
@@ -45,7 +45,7 @@ function _jdt_user_notes_permission() {
  *   Array of menu items.
  */
 
-function _jdt_user_notes_menu() {
+function jdt_user_notes_menu() {
   $items['jdt_user_notes/summary'] = array(
     'title' => 'Displays all notes',
     'page callback' => 'notes_summary',
@@ -74,13 +74,13 @@ function _jdt_user_notes_menu() {
   );
   $items['article/autocomplete'] = array(
     'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_articles',
+    'page callback' => '_jdt_user_notes_all_articles',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
   $items['user_un/autocomplete'] = array(
     'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_users',
+    'page callback' => '_jdt_user_notes_all_users',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
@@ -147,7 +147,7 @@ function _jdt_user_notes_note_exists($nid, $uid) {
     ->condition('author_uid', $uid, "=")
     ->execute()
     ->fetchAssoc();
-  if(isset($result['note_text'])) {
+  if (isset($result['note_text'])) {
     return $result['note_text'];
   }
   return '';
@@ -191,9 +191,14 @@ function _jdt_user_notes_form_definition_submit($form, &$form_state) {
  *   String.
  */
 
-function select_all_users($string) {
-
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
+function _jdt_user_notes_all_users($string) {
+  $status = 1;
+  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%:string%' AND status = :status",
+    array(
+      ':string' => $string,
+      ':status' => $status
+    )
+  );
   $matches = array();
   foreach ($result as $item) {
     $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
@@ -208,9 +213,8 @@ function select_all_users($string) {
  *   String.
  */
 
-function select_all_articles($string) {
-
-  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
+function _jdt_user_notes_all_articles($string) {
+  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type = 'article_1'");
   $matches = array();
   foreach ($result as $item) {
     $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
@@ -226,7 +230,7 @@ function select_all_articles($string) {
  */
 
  function jdt_user_notes_block_view() {
-  $form = drupal_get_form('jdt_user_notes_add_form');
+  $form = drupal_get_form('_jdt_user_notes_add_form');
   $block = array(
     'content' => $form,
   );
@@ -236,7 +240,7 @@ function select_all_articles($string) {
 /**
  * get current user
  */
-function get_current_user_custom() {
+function _jdt_user_notes_user() {
   global $user;
   $user_id = $user->uid;
   $user_name = $user->name;
@@ -255,7 +259,7 @@ function get_current_user_custom() {
  *   Form.
  */
 
-function jdt_user_notes_add_form($form, &$form_state) {
+function _jdt_user_notes_add_form($form, &$form_state) {
 
   $form['article_nid'] = array(
     '#type' => 'textfield',
@@ -271,7 +275,7 @@ function jdt_user_notes_add_form($form, &$form_state) {
     '#title' => t('Authored by'),
     '#size' => 30,
     '#maxlength' => 100,
-    '#default_value' => get_current_user_custom(),
+    '#default_value' => _jdt_user_notes_user(),
     '#disabled' => TRUE,
     '#required' => TRUE,
   );
@@ -298,7 +302,7 @@ function jdt_user_notes_add_form($form, &$form_state) {
  * @param
  *   $field.
  * @return
- *   Uid of the user
+ *   Uid of the user.
  */
 
 function _jdt_user_notes_get_user_id($field) {
