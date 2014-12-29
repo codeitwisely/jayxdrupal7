@@ -45,8 +45,8 @@ function jdt_user_notes_schema() {
       'article_nid' => array('article_nid'),
       'author_uid' => array('author_uid'),
       'note_text' => array('note_text'),
-),
-);
+    ),
+  );
   return $schema;
 }
 
