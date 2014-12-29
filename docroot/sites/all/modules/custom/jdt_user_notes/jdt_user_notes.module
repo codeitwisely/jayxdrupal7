@@ -211,7 +211,7 @@ function _jdt_user_notes_all_users($string) {
  *   String.
  */
 
-function _jdt_user_notes_all_articles($string) {
+function _jdt_user_notes_select_all_articles($string) {
 
   $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
   $matches = array();
