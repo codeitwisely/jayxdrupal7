@@ -6,15 +6,13 @@
  */
 
 /**
- * Function to return a database entry for the jdt_user_notes table.
- * According to the note_id.
+ * Function to read notes from the db.
  * @param
- *   The note_id for which we want to see db entry.
+ *   The user for who we want to display results.
  * @return
- *   Jdt_user_notes table entry.
+ *   Array.
  */
-
-function _jdt_user_notes_select_notes($note_id) {
+function _jdt_user_notes_select($user) {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('u', array('name'))
     ->fields('n', array('title'))
@@ -22,29 +20,34 @@ function _jdt_user_notes_select_notes($note_id) {
     ->join('node', 'n', 'jun.article_nid = n.nid')
     ->join('users', 'u', 'jun.author_uid = u.uid')
     ->condition('n.type', 'article_1', '=')
-    ->condition('jun.note_id', $note_id, '=');
+    ->condition('u.uid', $user, '=');
   $result = $query->execute()->fetchAssoc();
 
   return $result;
 }
 
 /**
+ * Function to return a database entry for the jdt_user_notes table.
+ * According to the note_id
+ */
+
+/**
  * Function to delete a note.
  * @param
- *   A note_id
+ *   Array of fields.
  * @return
- *   A new DeleteQuery object for this connection.(Note delete)
+ *   The query or false.
  */
-function _jdt_user_notes_del_note($note_id) {
+function _jdt_user_notes_del($entry = array()) {
   try {
-    $query = db_delete('jdt_user_notes', 'jun')
-      ->condition('jun.note_id', $note_id, '=');
+    $query = db_delete('jdt_user_notes')
+      ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
 
     return $result;
   }
   catch (Exception $e) {
-    watchdog(t('Failed to delete record in table. Message = %message, query= %query',
+    watchdog(t('Failed to delete record in database. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
 
@@ -52,13 +55,13 @@ function _jdt_user_notes_del_note($note_id) {
 }
 
 /**
- * Function to update a note.
  * @param
- *   The note_id to be updated.
+ *   Array of fields to update.
  * @return
- *   UpdateQuery A new UpdateQuery object for this connection.(Note update).
+ *   Query.
+ * Function to update a note.
  */
-function _jdt_user_notes_updt($note_id) {
+function _jdt_user_notes_updt($entry = array()) {
   try {
     $query = db_update('jdt_user_notes')
       ->fields($entry)

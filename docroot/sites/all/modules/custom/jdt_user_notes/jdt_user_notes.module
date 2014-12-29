@@ -38,5 +38,3 @@ function jdt_user_notes_permission() {
     ),
   );
 }
-
-
