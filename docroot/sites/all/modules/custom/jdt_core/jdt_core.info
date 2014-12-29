@@ -1,0 +1,5 @@
+name = Jdt Core
+description = Carry any global site configuration settings
+core = 7.x
+package = "Appnovation modules"
+version = "7.x-1.0"
