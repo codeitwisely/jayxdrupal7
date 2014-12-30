@@ -51,6 +51,7 @@ function jdt_user_notes_menu() {
     'title' => 'Add user note',
     'description' => 'Add a new user note',
     'page callback' => '_jdt_user_notes_callback_test',
+    'page_arguments' => array(2),
     'access arguments' => array('access page manager'),
     'expanded' => TRUE,
   );
@@ -279,8 +280,7 @@ function _jdt_user_notes_add_form($form, &$form_state) {
     '#title' => t('Article'),
     '#size' => 30,
     '#maxlength' => 100,
-    '#autocomplete_path' => 'article/autocomplete',
-    '#required' => TRUE,
+    '#type' => 'hidden',
   );
 
   $form['author_uid'] = array(
@@ -290,13 +290,15 @@ function _jdt_user_notes_add_form($form, &$form_state) {
     '#maxlength' => 100,
     '#default_value' => _jdt_user_notes_get_current_user(),
     '#required' => TRUE,
+    '#type' => 'hidden',
     '#disabled' => TRUE,
   );
 
   $form['note_text'] = array(
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => 'Note text',
-      '#size' => 30,
+      '#cols' => 60  ,
+      '#rows' => 5,
       '#maxlength' => 100,
       '#required' => TRUE,
   );
@@ -361,7 +363,7 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
         'note_text' => $text,
     );
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    $add = _jdt_user_notes_create($entry);
+    $add = _jdt_user_notes_create_note($entry);
 
     if ($add) {
       drupal_set_message(t('Note has been added!'));

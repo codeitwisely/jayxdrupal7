@@ -1,41 +1,22 @@
 <?php
 /**
- * Implementation of CRUD FUNCTIONS.
  * @file
  * jdt_user_notes.crud.inc.
+ * Implementation of CRUD FUNCTIONS.
  */
 
 /**
- * Function to read notes from the db.
+ * Function to return a table entry for the jdt_user_notes table.
+ * According to the note_id.
  * @param
- *   The user for who we want to display results.
+ *   The note_id for which we want to see db entry.
  * @return
- *   Array.
+ *   Jdt_user_notes table entry.
  */
-function _jdt_user_notes_select($user) {
+function _jdt_user_notes_select_note($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('u', array('name'))
     ->fields('n', array('title'))
-    ->fields('jun', array('note_text'))
-    ->join('node', 'n', 'jun.article_nid = n.nid')
-    ->join('users', 'u', 'jun.author_uid = u.uid')
-    ->condition('n.type', 'article_1', '=')
-    ->condition('u.uid', $user, '=');
-  $result = $query->execute()->fetchAssoc();
-
-  return $result;
-}
-
-/**
- * Function to return the details for a note.
- * @param
- *   The note_id
- * @return
- *   Return the database entry for the note_id in parameters.
- */
-function _jdt_user_notes_select($note_id) {
-  $query = db_select('jdt_user_notes', 'jun')
-    ->fields('u', array('author_uid',''))
     ->fields('jun', array('note_text'))
     ->join('node', 'n', 'jun.article_nid = n.nid')
     ->join('users', 'u', 'jun.author_uid = u.uid')
@@ -45,23 +26,24 @@ function _jdt_user_notes_select($note_id) {
 
   return $result;
 }
+
 /**
  * Function to delete a note.
  * @param
- *   Array of fields.
+ *   The note_id to delete.
  * @return
- *   The query or false.
+ *   Return the number of deleted rows.
  */
-function _jdt_user_notes_del($entry = array()) {
+function _jdt_user_notes_del_note($note_id) {
   try {
     $query = db_delete('jdt_user_notes')
-      ->condition('note_id', $entry['note_id']);
+      ->condition('note_id', $note_id, '=');
     $result = $query->execute();
 
     return $result;
   }
   catch (Exception $e) {
-    watchdog(t('Failed to delete record in database. Message = %message, query= %query',
+    watchdog(t('Failed to delete record in table. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
 
@@ -69,15 +51,15 @@ function _jdt_user_notes_del($entry = array()) {
 }
 
 /**
- * @param
- *   Array of fields to update.
- * @return
- *   Query.
  * Function to update a note.
+ * @param
+ *   The note_id to be updated.
+ * @return
+ *   Return the number of updated rows.
  */
-function _jdt_user_notes_updt($entry = array()) {
+function _jdt_user_notes_updt_note($entry = array()) {
   try {
-    $query = db_update('jdt_user_notes')
+    $query = db_update('jdt_user_notes', 'jun')
       ->fields($entry)
       ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
@@ -92,14 +74,13 @@ function _jdt_user_notes_updt($entry = array()) {
 }
 
 /**
+ * Function to add a note to an existing Article.
  * @param
  *   Array of fields to insert on the DB.
  * @return
- *   FALSE.
- * Function to Add Note.
+ *   Return the last id inserted on the table.
  */
-function _jdt_user_notes_create($entry = array()) {
-  $return_value = NULL;
+function _jdt_user_notes_create_note($entry = array()) {
   try{
     $return_value = db_insert('jdt_user_notes')
       ->fields($entry)
