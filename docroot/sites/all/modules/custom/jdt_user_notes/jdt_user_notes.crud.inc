@@ -8,19 +8,14 @@
 /**
  * Function to return a table entry for the jdt_user_notes table.
  * According to the note_id.
- * @param
- *   The note_id for which we want to see db entry.
+ * @param $note_id
+ *   The note_id for which we want to see the db entry.
  * @return
- *   Jdt_user_notes table entry.
+ *   jdt_user_notes table entry.
  */
 function _jdt_user_notes_select_note($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
-    ->fields('u', array('name'))
-    ->fields('n', array('title'))
-    ->fields('jun', array('note_text'))
-    ->join('node', 'n', 'jun.article_nid = n.nid')
-    ->join('users', 'u', 'jun.author_uid = u.uid')
-    ->condition('n.type', 'article_1', '=')
+    ->fields('jun', array('article_nid', 'author_uid', 'note_text'))
     ->condition('jun.note_id', $note_id, '=');
   $result = $query->execute()->fetchAssoc();
 
@@ -29,10 +24,10 @@ function _jdt_user_notes_select_note($note_id) {
 
 /**
  * Function to delete a note.
- * @param
+ * @param $note_id
  *   The note_id to delete.
  * @return
- *   Return the number of deleted rows.
+ *   Return the number of deleted rows or false.
  */
 function _jdt_user_notes_del_note($note_id) {
   try {
@@ -52,10 +47,10 @@ function _jdt_user_notes_del_note($note_id) {
 
 /**
  * Function to update a note.
- * @param
- *   The note_id to be updated.
+ * @param $entry
+ *   Array of fields to be updated on the DB.
  * @return
- *   Return the number of updated rows.
+ *   Return the number of updated rows or false.
  */
 function _jdt_user_notes_updt_note($entry = array()) {
   try {
@@ -70,15 +65,16 @@ function _jdt_user_notes_updt_note($entry = array()) {
     watchdog(t('Failed to update database. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
+
   return FALSE;
 }
 
 /**
  * Function to add a note to an existing Article.
- * @param
+ * @param $entry
  *   Array of fields to insert on the DB.
  * @return
- *   Return the last id inserted on the table.
+ *   Return the last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
   try{
@@ -86,11 +82,12 @@ function _jdt_user_notes_create_note($entry = array()) {
       ->fields($entry)
       ->execute();
 
-      return $return_value;
+    return $return_value;
   }
   catch (Exception $e) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
+
   return FALSE;
 }
