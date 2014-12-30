@@ -12,27 +12,27 @@
  */
 function jdt_user_notes_permission() {
   return array(
-    'view_jdt_user_notes' => array(
+    'view user notes' => array(
       'title' => t('View any user note'),
       'description' => t('View any published user notes.'),
     ),
-    'add_jdt_user_notes' => array(
+    'add user notes' => array(
       'title' => t('Create new user note'),
       'description' => t('Add user notes.'),
     ),
-    'edit_own_jdt_user_notes' => array(
+    'edit own user notes' => array(
       'title' => t('Edit own user note'),
       'description' => t('Edit own user notes.'),
     ),
-    'edit_any_jdt_user_notes' => array(
+    'edit any user notes' => array(
       'title' => t('Edit any user note'),
       'description' => t('Edit any user notes.'),
     ),
-    'delete_own_jdt_user_notes' => array(
+    'delete own user notes' => array(
       'title' => t('Delete own user note'),
       'description' => t('Delete own user notes.'),
     ),
-    'delete_any_jdt_user_notes' => array(
+    'delete any user notes' => array(
       'title' => t('Delete any user note'),
       'description' => t('Delete any user notes.'),
     ),

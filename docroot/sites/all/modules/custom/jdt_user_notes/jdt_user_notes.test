@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Tests for CRUDS Functions used for the jdt_user_notes module.
+ */
+
+class JdtUserNotesTestCase extends DrupalWebTestCase {
+  //The user to who we'll give privileges for the tests
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Jdt user notes test of CRUD functions',
+      'description' => 'Ensure that the CRUD functions work',
+      'group' => 'Blog',
+    );
+  }
+
+  public function setUp() {
+    // Enable any modules required for the test. This should be an array of
+    // module names.
+    parent::setUp(array('jdt_user_notes'));
+    // Create and log in our privileged user.
+    $this->privileged_user = $this->drupalCreateUser(
+      array(
+        'view user notes',
+        'add user notes',
+        'edit own user notes',
+        'edit any user notes',
+        'delete own user notes',
+        'delete any user notes',
+      )
+    );
+    $this->drupalLogin($this->privileged_user);
+  }
+}
