@@ -11,15 +11,33 @@
  * @param $note_id
  *   The note_id for which we want to see the db entry.
  * @return
- *   jdt_user_notes table entry.
+ *   An array with the fields of the table entry according to the note_id.
  */
-function _jdt_user_notes_note_load($note_id) {
+function _jdt_user_notes_note_select($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('jun', array('article_nid', 'author_uid', 'note_text'))
     ->condition('jun.note_id', $note_id, '=');
   $result = $query->execute()->fetchAssoc();
 
   return $result;
+}
+
+/**
+ * Function to load entries from the DB.
+ * @param $entry
+ *   Array of fields to be selected on the jdt_user_notes table.
+ * @return
+ *   Return results in object format.
+ */
+function jdt_user_notes_entry_load($entry = array()){
+  $select = db_select('jdt_user_notes', 'jun');
+  $select->fields('jun', array('article_nid', 'author_uid', 'note_text'));
+  // Add each field and value as a condition to this query.
+  foreach ($entry as $field => $value) {
+    $select->condition($field, $value);
+  }
+
+  return $select->execute()->fetchAll();
 }
 
 /**
