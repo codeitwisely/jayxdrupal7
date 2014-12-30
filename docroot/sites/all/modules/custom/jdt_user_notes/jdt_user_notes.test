@@ -13,7 +13,7 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
     return array(
       'name' => 'Jdt user notes test of CRUD functions',
       'description' => 'Ensure that the CRUD functions work',
-      'group' => 'Blog',
+      'group' => 'Jdt user notes',
     );
   }
 
@@ -33,5 +33,25 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
       )
     );
     $this->drupalLogin($this->privileged_user);
+  }
+
+  public function testJdtUserNotesCreate() {
+    $entry = array(
+      'article_nid' => 63,
+      'author_uid' => 1,
+      'note_text' => 'Here is the first test',
+    );
+    $note = _jdt_user_notes_create_note($entry);
+    $this->assertText(t('Note for @article_nid has been created.', array('@article' => $edit['article'])));
+
+    // For debugging, we might output the node structure with $this->verbose()
+    $this->verbose('Note created: ' . var_export($node, TRUE));
+    // $this->drupalCreateNode(array('type' => 'blog', 'uid' => $this->privileged_user->uid));
+    // $this->drupalLogin($this->privileged_user);
+
+    // $this->drupalGet('blog/' . $this->privileged_user->uid);
+    // $this->assertResponse(200);
+    // $this->assertTitle(t("@name's blog", array('@name' => format_username($this->privileged_user))) . ' | Drupal', 'Blog title was displayed');
+    // $this->assertText(t('You are not allowed to post a new blog entry.'), 'No new entries can be posted without the right permission');
   }
 }
