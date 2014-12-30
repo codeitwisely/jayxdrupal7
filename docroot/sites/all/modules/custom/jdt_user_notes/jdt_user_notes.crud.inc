@@ -13,7 +13,7 @@
  * @return
  *   jdt_user_notes table entry.
  */
-function _jdt_user_notes_select_note($note_id) {
+function _jdt_user_notes_note_load($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
     ->fields('jun', array('article_nid', 'author_uid', 'note_text'))
     ->condition('jun.note_id', $note_id, '=');
