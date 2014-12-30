@@ -15,7 +15,7 @@
  */
 function _jdt_user_notes_note_select($note_id) {
   $query = db_select('jdt_user_notes', 'jun')
-    ->fields('jun', array('article_nid', 'author_uid', 'note_text'))
+    ->fields('jun')
     ->condition('jun.note_id', $note_id, '=');
   $result = $query->execute()->fetchAssoc();
 
@@ -29,9 +29,9 @@ function _jdt_user_notes_note_select($note_id) {
  * @return
  *   Return results in object format.
  */
-function _jdt_user_notes_entry_load($entry = array()){
+function _jdt_user_notes_entry_load($entry = array()) {
   $select = db_select('jdt_user_notes', 'jun');
-  $select->fields('jun', array('article_nid', 'author_uid', 'note_text'));
+  $select->fields('jun');
   // Add each field and value as a condition to this query.
   foreach ($entry as $field => $value) {
     $select->condition($field, $value);

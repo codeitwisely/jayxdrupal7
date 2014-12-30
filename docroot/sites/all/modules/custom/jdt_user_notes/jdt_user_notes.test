@@ -35,22 +35,19 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
       )
     );
     $this->privileged_user->roles[$index] = 'administrator';
-    $this->user_save($this->privileged_user);
+    //$this->user_save($this->privileged_user);
     $this->drupalLogin($this->privileged_user);
   }
 
-  public function testJdtUserNotesDelete() {
+  public function testJdtUserNotesCreate() {
     $entry = array(
-      'note_id' => 38,
       'article_nid' => 63,
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    $note_id = 25;
     //$entry = array();
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    //$this->_jdt_user_notes_del_note($note_id);
-    if(__jdt_user_notes_create_note($note_id)) {
+    if (_jdt_user_notes_create_note($entry)) {
       $this->assertText(t('Entry created'));
     }
     // _jdt_user_notes_entry_load($note);
