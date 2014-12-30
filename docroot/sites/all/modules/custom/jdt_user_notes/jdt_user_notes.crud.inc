@@ -29,7 +29,7 @@ function _jdt_user_notes_note_select($note_id) {
  * @return
  *   Return results in object format.
  */
-function jdt_user_notes_entry_load($entry = array()){
+function _jdt_user_notes_entry_load($entry = array()){
   $select = db_select('jdt_user_notes', 'jun');
   $select->fields('jun', array('article_nid', 'author_uid', 'note_text'));
   // Add each field and value as a condition to this query.

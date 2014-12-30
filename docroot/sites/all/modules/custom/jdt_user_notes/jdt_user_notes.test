@@ -22,6 +22,8 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
     // module names.
     parent::setUp(array('jdt_user_notes'));
     // Create and log in our privileged user.
+    $roles = user_roles();
+    $index = array_search('administrator', $roles);
     $this->privileged_user = $this->drupalCreateUser(
       array(
         'view user notes',
@@ -32,20 +34,32 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
         'delete any user notes',
       )
     );
+    $this->privileged_user->roles[$index] = 'administrator';
+    $this->user_save($this->privileged_user);
     $this->drupalLogin($this->privileged_user);
   }
 
-  public function testJdtUserNotesCreate() {
+  public function testJdtUserNotesDelete() {
     $entry = array(
+      'note_id' => 38,
       'article_nid' => 63,
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    $note = _jdt_user_notes_create_note($entry);
-    $this->assertText(t('Note for @article_nid has been created.', array('@article' => $edit['article'])));
+    $note_id = 25;
+    //$entry = array();
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    //$this->_jdt_user_notes_del_note($note_id);
+    if(__jdt_user_notes_create_note($note_id)) {
+      $this->assertText(t('Entry created'));
+    }
+    // _jdt_user_notes_entry_load($note);
+    // $this->assertEqual(count($result), 1, 'Found one entry with Hello Note 1');
+    //$this->assertEqual(count($note), 6, 'Found a total of 6 entries.'
+    // assertText(t('Note for @article_nid has been created.', array('@article_nid' => 'article_nid')));
 
     // For debugging, we might output the node structure with $this->verbose()
-    $this->verbose('Note created: ' . var_export($node, TRUE));
+    // $this->verbose('Note created: ' . var_export($note, TRUE));
     // $this->drupalCreateNode(array('type' => 'blog', 'uid' => $this->privileged_user->uid));
     // $this->drupalLogin($this->privileged_user);
 
