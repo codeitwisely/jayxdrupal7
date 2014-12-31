@@ -1,10 +1,8 @@
 <?php
-
 /**
  * @file
  * Tests for CRUDS Functions used for the jdt_user_notes module.
  */
-
 class JdtUserNotesTestCase extends DrupalWebTestCase {
   //The user to who we'll give privileges for the tests
   protected $privileged_user;
@@ -35,34 +33,55 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
       )
     );
     $this->privileged_user->roles[$index] = 'administrator';
-    //$this->user_save($this->privileged_user);
     $this->drupalLogin($this->privileged_user);
   }
 
+  /**
+   * Here we test the creation of a Note.
+   */
   public function testJdtUserNotesCreate() {
     $entry = array(
-      'article_nid' => 63,
+      'article_nid' => 20,
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    //$entry = array();
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    if (_jdt_user_notes_create_note($entry)) {
-      $this->assertText(t('Entry created'));
-    }
-    // _jdt_user_notes_entry_load($note);
-    // $this->assertEqual(count($result), 1, 'Found one entry with Hello Note 1');
-    //$this->assertEqual(count($note), 6, 'Found a total of 6 entries.'
-    // assertText(t('Note for @article_nid has been created.', array('@article_nid' => 'article_nid')));
+    $insert = _jdt_user_notes_create_note($entry);
+    $this->assertEqual(count($insert), 1, '1 entry inserted.', 'other');
+  }
 
-    // For debugging, we might output the node structure with $this->verbose()
-    // $this->verbose('Note created: ' . var_export($note, TRUE));
-    // $this->drupalCreateNode(array('type' => 'blog', 'uid' => $this->privileged_user->uid));
-    // $this->drupalLogin($this->privileged_user);
+  /**
+   * Here we test the reading of the table jdt_user_notes for a note_id.
+   */
+  public function testJdtUserNotesRead() {
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    $note_id = 1;
+    $select = _jdt_user_notes_note_select($note_id);
+    $this->assertEqual(count($select), 1, '1 entry selected.', 'other');
+  }
 
-    // $this->drupalGet('blog/' . $this->privileged_user->uid);
-    // $this->assertResponse(200);
-    // $this->assertTitle(t("@name's blog", array('@name' => format_username($this->privileged_user))) . ' | Drupal', 'Blog title was displayed');
-    // $this->assertText(t('You are not allowed to post a new blog entry.'), 'No new entries can be posted without the right permission');
+  /**
+   * Test function to update a note.
+   */
+  public function testJdtUserNotesUpdate() {
+    $entry = array(
+      'note_id' => 1,
+      'article_nid' => 63,
+      'author_uid' => 1,
+      'note_text' => 'Here the modified note',
+    );
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    $update = _jdt_user_notes_updt_note($entry);
+    $this->assertEqual(count($update), 1, '1 entry updated.', 'other');
+  }
+
+  /**
+   * Test function to delete a note.
+   */
+  public function testJdtUserNotesDelete() {
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    $note_id = 1;
+    $delete = _jdt_user_notes_del_note($note_id);
+    $this->assertEqual(count($delete), 1, '1 entry deleted.', 'other');
   }
 }
