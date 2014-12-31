@@ -72,6 +72,6 @@ function jdt_core_update_7004() {
       variable_set($var, $theme);
     }
   }
-  // Disable the default Bartik theme
+  // Disable the default Bartik theme.
   theme_disable(array('bartik'));
 }
