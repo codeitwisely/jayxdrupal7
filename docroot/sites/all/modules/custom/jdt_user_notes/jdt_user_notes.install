@@ -6,7 +6,7 @@
  */
 
 /**
- * Implements jdt_user_notes_schema().
+ * Implements hook_schema().
  */
 function jdt_user_notes_schema() {
   $schema['jdt_user_notes'] = array(
