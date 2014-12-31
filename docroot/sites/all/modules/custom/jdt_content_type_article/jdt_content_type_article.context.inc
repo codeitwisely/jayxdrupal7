@@ -31,7 +31,7 @@ function jdt_content_type_article_context_default_contexts() {
           'module' => 'jdt_user_notes',
           'delta' => 'articles_info',
           'region' => 'sidebar_first',
-          'weight' => '-10',
+          'weight' => '7',
         ),
       ),
     ),
