@@ -19,8 +19,8 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
     // Enable any modules required for the test this should be an array of,
     // module names.
     parent::setUp(array('jdt_user_notes'));
-    // Create and log in our privileged user.
-    $this->privileged_user = $this->drupalCreateUser(
+    // Create and log in our privilegedUser.
+    $this->privilegedUser = $this->drupalCreateUser(
       array(
         'view user notes',
         'add user notes',
@@ -30,7 +30,7 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
         'delete any user notes',
       )
     );
-    $this->drupalLogin($this->privileged_user);
+    $this->drupalLogin($this->privilegedUser);
   }
 
   /**
