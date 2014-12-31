@@ -72,7 +72,7 @@ function _jdt_user_notes_del_note($note_id) {
  */
 function _jdt_user_notes_updt_note($entry = array()) {
   try {
-    $query = db_update('jdt_user_notes', 'jun')
+    $query = db_update('jdt_user_notes')
       ->fields($entry)
       ->condition('note_id', $entry['note_id']);
     $result = $query->execute();
