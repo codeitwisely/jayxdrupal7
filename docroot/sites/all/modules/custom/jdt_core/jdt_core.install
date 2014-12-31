@@ -13,6 +13,7 @@ function jdt_core_install() {
   jdt_core_update_7001();
   jdt_core_update_7002();
   jdt_core_update_7003();
+  jdt_core_update_7004();
 }
 /**
  * Implements hook_update_N().
@@ -20,7 +21,7 @@ function jdt_core_install() {
  */
 function jdt_core_update_7000() {
   // Array of modules that we want to enable.
-  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "coder", "date", "field_group", "references", "views_ui", "simpletest");
+  $module_list = array("views", "features", "strongarm", "context", "pathauto", "diff", "libraries", "jquery_update", "devel", "module_filter", "admin_menu", "coder", "date", "field_group", "references", "views_ui");
   module_enable($module_list);
 }
 
@@ -52,4 +53,25 @@ function jdt_core_update_7003() {
   // Here we want to enable jdt_user_notes module.
   $module_list = array("jdt_user_notes");
   module_enable($module_list);
+}
+
+/**
+ * Implements hook_update_N().
+ * Enable custom theme and set it as default.
+ */
+function jdt_core_update_7004() {
+  // Any themes without keys here will get numeric keys and so will be enabled,
+  // but not placed into variables.
+  $enable = array(
+    'theme_default' => 'dt-custom',
+    'admin_theme' => 'seven',
+  );
+  theme_enable($enable);
+  foreach ($enable as $var => $theme) {
+    if (!is_numeric($var)) {
+      variable_set($var, $theme);
+    }
+  }
+  // Disable the default Bartik theme
+  theme_disable(array('bartik'));
 }

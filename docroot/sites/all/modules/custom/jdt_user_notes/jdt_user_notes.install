@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * jdt_user_notes.install
+ * jdt_user_notes.install.
  * This will implements fonctionnality to install the jdt_user_notes module.
  */
 
 /**
- * Implements jdt_user_notes_schema().
+ * Implements hook_schema().
  */
 function jdt_user_notes_schema() {
   $schema['jdt_user_notes'] = array(
@@ -49,5 +49,3 @@ function jdt_user_notes_schema() {
   );
   return $schema;
 }
-
-
