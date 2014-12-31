@@ -34,51 +34,40 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Here we test the creation of a Note.
+   * We will successively test the insert function,
+   * the select function,
+   * the update function,
+   * and the delete function.
    */
-  public function testJdtUserNotesCreate() {
+  public function testJdtUserNotesCrud() {
     $entry = array(
       'article_nid' => 67,
       'author_uid' => 7,
       'note_text' => 'Here is the first test',
     );
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+
+    // Test of the insert function.
     $insert = _jdt_user_notes_create_note($entry);
     $this->assertTrue($insert, '1 entry inserted.', 'other');
-  }
 
-  /**
-   * Here we test the reading of the table jdt_user_notes for a note_id.
-   */
-  public function testJdtUserNotesRead() {
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    // Test of the select function.
     $note_id = 1;
     $select = _jdt_user_notes_note_select($note_id);
     $this->assertTrue($select, '1 entry selected.', 'other');
+
+    // Test of the update function.
+    $entry = array(
+      'note_id' => 1,
+      'article_nid' => 63,
+      'author_uid' => 1,
+      'note_text' => 'Here the modified note',
+    );
+    $update = _jdt_user_notes_updt_note($entry);
+    $this->assertTrue($update, '1 entry updated.', 'other');
+
+    // Test of the delete function.
+    $delete = _jdt_user_notes_del_note($note_id);
+    $this->assertTrue($delete, '1 entry deleted.', 'other');
   }
-
-  /**
-   * Test function to update a note.
-   */
-  // public function testJdtUserNotesUpdate() {
-  //   $entry = array(
-  //     'note_id' => 1,
-  //     'article_nid' => 63,
-  //     'author_uid' => 1,
-  //     'note_text' => 'Here the modified note',
-  //   );
-  //   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  //   $update = _jdt_user_notes_updt_note($entry);
-  //   $this->assertEqual(count($update), 1, '1 entry updated.', 'other');
-  // }
-
-  /**
-   * Test function to delete a note.
-   */
-  // public function testJdtUserNotesDelete() {
-  //   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  //   $note_id = 1;
-  //   $delete = _jdt_user_notes_del_note($note_id);
-  //   $this->assertEqual(count($delete), 1, '1 entry deleted.', 'other');
-  // }
 }
