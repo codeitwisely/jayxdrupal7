@@ -4,8 +4,8 @@
  * Tests for CRUDS Functions used for the jdt_user_notes module.
  */
 class JdtUserNotesTestCase extends DrupalWebTestCase {
-  //The user to who we'll give privileges for the tests.
-  protected $privileged_user;
+  // The user to who we'll give privileges for the tests.
+  protected $privilegedUser;
 
   public static function getInfo() {
     return array(
@@ -16,12 +16,10 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
   }
 
   public function setUp() {
-    // Enable any modules required for the test. This should be an array of.
+    // Enable any modules required for the test this should be an array of,
     // module names.
     parent::setUp(array('jdt_user_notes'));
     // Create and log in our privileged user.
-    $roles = user_roles();
-    $index = array_search('administrator', $roles);
     $this->privileged_user = $this->drupalCreateUser(
       array(
         'view user notes',
@@ -32,7 +30,6 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
         'delete any user notes',
       )
     );
-    $this->privileged_user->roles[$index] = 'administrator';
     $this->drupalLogin($this->privileged_user);
   }
 
