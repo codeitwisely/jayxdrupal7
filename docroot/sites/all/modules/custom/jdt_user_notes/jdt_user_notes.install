@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * jdt_user_notes.install
+ * jdt_user_notes.install.
  * This will implements fonctionnality to install the jdt_user_notes module.
  */
 
