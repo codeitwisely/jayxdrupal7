@@ -6,6 +6,26 @@
  */
 
 /**
+ * Function to read notes from the db.
+ * @param $user
+ *   The user for who we want to display results.
+ * @return
+ *   The fields from the jdt_user_notes table.
+ */
+function _jdt_user_notes_select_all($user) {
+  $query = db_select('jdt_user_notes', 'jun')
+    ->fields('u', array('name'))
+    ->fields('n', array('title'))
+    ->fields('jun', array('note_id', 'note_text'));
+  $query->join('node', 'n', 'jun.article_nid = n.nid');
+  $query->join('users', 'u', 'jun.author_uid = u.uid');
+  $query->condition('n.type', 'article_1', '=')
+    ->condition('u.uid', $user, '=');
+  $result = $query->execute()->fetchAssoc();
+  return $result;
+}
+
+/**
  * Function to return a table entry for the jdt_user_notes table.
  * According to the note_id.
  * @param $note_id
@@ -23,21 +43,14 @@ function _jdt_user_notes_note_select($note_id) {
 }
 
 /**
- * Function to load entries from the DB.
- * @param $entry
- *   Array of fields to be selected on the jdt_user_notes table.
+ * Loader for getting notes in object format for a given not_id.
+ * @param $note_id
+ *   The note_id to load.
  * @return
  *   Return results in object format.
  */
-function jdt_user_notes_entry_load($entry = array()) {
-  $select = db_select('jdt_user_notes', 'jun');
-  $select->fields('jun');
-  // Add each field and value as a condition to this query.
-  foreach ($entry as $field => $value) {
-    $select->condition($field, $value);
-  }
-
-  return $select->execute()->fetchAll();
+function jdt_user_notes_load($note_id) {
+  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
 }
 
 /**
@@ -108,4 +121,48 @@ function _jdt_user_notes_create_note($entry = array()) {
   }
 
   return FALSE;
+}
+
+/**
+ * Grab Note from the database.
+ * @param $article_nid
+ *   The article nid of the note.
+ * @param $author_uid
+ *   The author uid of the note.
+ * @return
+ *   The note_text field of the jdt_user_notes table or an empty string.
+ */
+function _jdt_user_notes_note_exists($article_nid, $author_uid) {
+// Grab values from the database.
+// Populate default value with the value stored.
+// in the database.
+  $result = db_select('jdt_user_notes', 'jun')
+    ->fields('jun')
+    ->condition('article_nid', $article_nid, "=")
+    ->condition('author_uid', $author_uid, "=")
+    ->execute()
+    ->fetchAssoc();
+  if (isset($result['note_text'])) {
+    return $result['note_text'];
+  }
+  return '';
+}
+
+/**
+ * Grab Note Id from the database.
+ * @param $article_nid
+ *   The article nid of the note.
+ * @param $author_uid
+ *   The author uid of the note.
+ * @return
+ *   The note_id field of the jdt_user_notes table or an empty string.
+ */
+function _jdt_user_notes_note_id($article_nid, $author_uid) {
+  $result = db_select('jdt_user_notes', 'jun')
+    ->fields('jun')
+    ->condition('article_nid', $article_nid, "=")
+    ->condition('author_uid', $author_uid, "=")
+    ->execute()
+    ->fetchAssoc();
+  return $result['note_id'];
 }
