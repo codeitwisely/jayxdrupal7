@@ -6,26 +6,6 @@
  */
 
 /**
- * Function to read notes from the db.
- * @param $user
- *   The user for who we want to display results.
- * @return
- *   The fields from the jdt_user_notes table.
- */
-function _jdt_user_notes_select_all($user) {
-  $query = db_select('jdt_user_notes', 'jun')
-    ->fields('u', array('name'))
-    ->fields('n', array('title'))
-    ->fields('jun', array('note_id', 'note_text'));
-  $query->join('node', 'n', 'jun.article_nid = n.nid');
-  $query->join('users', 'u', 'jun.author_uid = u.uid');
-  $query->condition('n.type', 'article_1', '=')
-    ->condition('u.uid', $user, '=');
-  $result = $query->execute()->fetchAssoc();
-  return $result;
-}
-
-/**
  * Function to return a table entry for the jdt_user_notes table.
  * According to the note_id.
  * @param $note_id

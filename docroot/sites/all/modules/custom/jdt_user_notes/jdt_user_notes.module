@@ -49,13 +49,6 @@ function jdt_user_notes_permission() {
  *   Array of items.
  */
 function jdt_user_notes_menu() {
-  $items['jdt-user-notes/summary'] = array(
-    'title' => 'View',
-    'page callback' => '_jdt_user_notes_summary',
-    'access arguments' => array('view user notes'),
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'expanded' => TRUE,
-  );
   $items['jdt-user-notes/%jdt_user_notes/view'] = array(
     'title' => 'View',
     'page callback' => 'drupal_get_form',
@@ -106,12 +99,10 @@ function _jdt_user_notes_add_form($form, &$form_state, $node) {
     '#type' => 'value',
     '#value' => $node_id,
   );
-
   $form['author_uid'] = array(
     '#type' => 'value',
     '#value' => $user_id,
   );
-
   $form['note_text'] = array(
       '#type' => 'textarea',
       '#title' => 'Note text',
@@ -120,13 +111,11 @@ function _jdt_user_notes_add_form($form, &$form_state, $node) {
       '#maxlength' => 100,
       '#required' => TRUE,
   );
-
   // now I add also a button
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add user note'),
   );
-
   $form['#submit'][] = '_jdt_user_notes_add_form_submit_handler';
   return $form;
 }
@@ -153,28 +142,6 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
   }
   $form_state['redirect'] = '<front>';
   drupal_set_message(t('The note has been added'), 'status');
-}
-
-/**
- * Return all notes which belong to the current user.
- * @return
- *   A table with informations about notes.
- */
-function _jdt_user_notes_summary() {
-  $user_id = _jdt_user_notes_get_current_user_id();
-  $result = _jdt_user_notes_select_all($user_id);
-  $rows = array();
-  $i = 0;
-  foreach ($result as $record) {
-    $rows[] = array_map('check_plain', (array)$record);
-    //Make some hyperlinks for editing and deleting.
-    $rows[$i]['edit'] = l(t('Edit'), 'jdt-user-notes/' . $rows[$i]['note_id'] . '/edit');
-    $rows[$i]['delete'] = l(t('Delete'), 'jdt-user-notes' . $rows[$i]['note_id'] . '/delete');
-    $i++;
-  }
-  $header = array(t('Note Id'), t('Article'), t('Author'), t('Note text'), t('Edit'), t('Delete'));
-  $output = theme('table', array('header' => $header, 'rows' => $rows));
-  return $output;
 }
 
 /**
