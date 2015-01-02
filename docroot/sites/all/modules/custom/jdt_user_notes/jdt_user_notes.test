@@ -3,9 +3,10 @@
  * @file
  * Tests for CRUDS Functions used for the jdt_user_notes module.
  */
+
 class JdtUserNotesTestCase extends DrupalWebTestCase {
-  //The user to who we'll give privileges for the tests.
-  protected $privileged_user;
+  // The user to who we'll give privileges for the tests.
+  protected $privilegedUser;
 
   public static function getInfo() {
     return array(
@@ -16,13 +17,11 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
   }
 
   public function setUp() {
-    // Enable any modules required for the test. This should be an array of.
+    // Enable any modules required for the test this should be an array of,
     // module names.
     parent::setUp(array('jdt_user_notes'));
-    // Create and log in our privileged user.
-    $roles = user_roles();
-    $index = array_search('administrator', $roles);
-    $this->privileged_user = $this->drupalCreateUser(
+    // Create and log in our privilegedUser.
+    $this->privilegedUser = $this->drupalCreateUser(
       array(
         'view user notes',
         'add user notes',
@@ -32,56 +31,47 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
         'delete any user notes',
       )
     );
-    $this->privileged_user->roles[$index] = 'administrator';
-    $this->drupalLogin($this->privileged_user);
+    $this->drupalLogin($this->privilegedUser);
   }
 
   /**
-   * Here we test the creation of a Note.
+   * Test module CRUD functions.
+   *
+   * We will successively test the insert function,
+   * the select function,
+   * the update function,
+   * and the delete function.
    */
-  public function testJdtUserNotesCreate() {
+  public function testJdtUserNotesCrud() {
     $entry = array(
-      'article_nid' => 20,
-      'author_uid' => 1,
+      'article_nid' => 67,
+      'author_uid' => 7,
       'note_text' => 'Here is the first test',
     );
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    $insert = _jdt_user_notes_create_note($entry);
-    $this->assertEqual(count($insert), 1, '1 entry inserted.', 'other');
-  }
 
-  /**
-   * Here we test the reading of the table jdt_user_notes for a note_id.
-   */
-  public function testJdtUserNotesRead() {
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    // Test of the insert function.
+    $insert = _jdt_user_notes_create_note($entry);
+    $this->assertTrue($insert, $insert ? t('Entry inserted.') : t('Impossible to insert entry'), 'jdt_notes_user CRUD');
+
+
+    // Test of the select function.
     $note_id = 1;
     $select = _jdt_user_notes_note_select($note_id);
-    $this->assertEqual(count($select), 1, '1 entry selected.', 'other');
-  }
+    $this->assertTrue($select, $select ? t('Entry selected.') : t('Impossible to select entry'), 'jdt_notes_user CRUD');
 
-  /**
-   * Test function to update a note.
-   */
-  public function testJdtUserNotesUpdate() {
+    // Test of the update function.
     $entry = array(
       'note_id' => 1,
       'article_nid' => 63,
       'author_uid' => 1,
       'note_text' => 'Here the modified note',
     );
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
     $update = _jdt_user_notes_updt_note($entry);
-    $this->assertEqual(count($update), 1, '1 entry updated.', 'other');
-  }
+    $this->assertTrue($update, $update ? t('Entry updated.') : t('Impossible to update entry'), 'jdt_notes_user CRUD');
 
-  /**
-   * Test function to delete a note.
-   */
-  public function testJdtUserNotesDelete() {
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    $note_id = 1;
+    // Test of the delete function.
     $delete = _jdt_user_notes_del_note($note_id);
-    $this->assertEqual(count($delete), 1, '1 entry deleted.', 'other');
+    $this->assertTrue($delete, $delete ? t('Entry deleted.') : t('Impossible to delete entry'), 'jdt_notes_user CRUD');
   }
 }
