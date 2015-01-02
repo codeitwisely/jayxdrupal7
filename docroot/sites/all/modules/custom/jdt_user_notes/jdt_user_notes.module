@@ -12,27 +12,27 @@
  */
 function jdt_user_notes_permission() {
   return array(
-    'view_jdt_user_notes' => array(
-      'title' => t('View user note'),
-      'description' => t('View user notes.'),
+    'view user notes' => array(
+      'title' => t('View any user note'),
+      'description' => t('View any published user notes.'),
     ),
-    'add_jdt_user_notes' => array(
+    'add user notes' => array(
       'title' => t('Create new user note'),
       'description' => t('Add user notes.'),
     ),
-    'edit_own_jdt_user_notes' => array(
+    'edit own user notes' => array(
       'title' => t('Edit own user note'),
       'description' => t('Edit own user notes.'),
     ),
-    'edit_any_jdt_user_notes' => array(
+    'edit any user notes' => array(
       'title' => t('Edit any user note'),
       'description' => t('Edit any user notes.'),
     ),
-    'delete_own_jdt_user_notes' => array(
+    'delete own user notes' => array(
       'title' => t('Delete own user note'),
       'description' => t('Delete own user notes.'),
     ),
-    'delete_any_jdt_user_notes' => array(
+    'delete any user notes' => array(
       'title' => t('Delete any user note'),
       'description' => t('Delete any user notes.'),
     ),
@@ -44,100 +44,76 @@ function jdt_user_notes_permission() {
  * @return
  *   Array of items.
  */
-
 function jdt_user_notes_menu() {
-  //New menu item to add an article.
-  $items['jdt_user_note/add/%node'] = array(
-    'title' => 'Add user note',
-    'description' => 'Add a new user note',
-    'page callback' => '_jdt_user_notes_callback_test',
-    'page_arguments' => array(2),
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
+  $items['jdt-user-notes/%jdt_user_notes/view'] = array(
+    'title' => 'View',
+    'access callback' => TRUE,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -2,
   );
-  $items['jdt_user_notes/summary'] = array(
-    'title' => 'Displays all notes',
-    'page callback' => '_jdt_user_notes_get_all_notes',
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
-  );
-  $items['jdt_user_notes/update'] = array(
-    'title' => 'Update a note',
+  $items['jdt-user-notes/%node/add'] = array(
+    'title' => 'Add new note to an article',
     'page callback' => 'drupal_get_form',
-    'page_arguments' => array('_jdt_user_notes_form_definition'),
+    'access arguments' => array('add user notes'),
+    'page arguments' => array('_jdt_user_notes_add_form', 1),
   );
-  $items['jdt_user_notes/add'] = array(
-    'title' => 'Add user note',
-    'description' => 'Add a new user note',
-    'page callback' => 'jdt_user_notes_block_view',
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
-  );
-  $items['jdt_user_notes/delete/%'] = array(
-    'title' => 'Delete Note',
-    'access arguments' => array('access page manager'),
-    'access_callback' => TRUE,
-    'expanded' => TRUE,
-    'page_arguments' => array('_jdt_user_notes_delete_note', 2),
-    'expanded' => TRUE,
-  );
-  $items['note/%'] = array(
-    'title' => 'Add a user note',
-    'access_callback' => TRUE,
+  $items['jdt-user-notes/%jdt_user_notes/edit'] = array(
+    'title' => 'Edit',
     'page callback' => 'drupal_get_form',
-    'access arguments' => array('Create new user note'),
-    'page_arguments' => array('jdt_user_notes_form_definition', 1),
+    'page arguments' => array('_jdt_user_notes_edit_form', 1),
+    'access arguments' => array('edit own user notes'),
+    'type' => MENU_LOCAL_TASK,
   );
-  $items['article/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => '_jdt_user_notes_select_all_articles',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-  $items['user_un/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => '_jdt_user_notes_all_users',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+  $items['jdt-user-notes/%jdt_user_notes/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_jdt_user_notes_delete_form', 1),
+    'access arguments' => array('delete own user notes'),
+    'type' => MENU_LOCAL_TASK,
   );
   return $items;
 }
 
-/**
- * BEGIN TEST with wildcard.
- */
+function jdt_user_notes_load($note_id)
+{
+  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
+}
 
-/**
-* Form definition. for updating a note.
-*/
-function _jdt_user_notes_form_definition($form, &$form_state, $nid) {
-  global $user;
-  $user_id = $user->uid;
+function jdt_user_notes_add_item_page()
+{
+  $item = new StdClass;
+  $item->rid = FALSE;
+  $item->my_field = '';
 
-  $default_value_note = jdt_user_notes_note_exists($nid, $user_id);
-  $default_note_id = jdt_user_notes_note_id($nid, $user_id);
-  $form['fieldset'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Note to Article'),
-    '#default_value' => 'Hello',
-  );
-  $form['fieldset']['note_textfield'] = array(
+  return drupal_get_form('_jdt_user_notes_add_form_definition', $item);
+}
+
+function _jdt_user_notes_edit_form($form, &$form_state, $note) {
+
+  $user_id = _jdt_user_notes_get_current_user_id();
+  $form['#item'] = $note;
+  $article_id = $note->article_nid;
+  $default_value_note = jdt_user_notes_note_exists($article_id, $user_id);
+  $default_note_id = jdt_user_notes_note_id($article_id, $user_id);
+
+  $form['note_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Note'),
+    '#required' => TRUE,
     '#default_value' => $default_value_note,
   );
 
   // Grab value for node id and make it part of the form state.
   // so you can use it later.
-  $form['nid'] = array(
+  $form['article_nid'] = array(
     '#type' => 'value',
-    '#value' => $nid,
+    '#value' => $note->article_nid,
   );
 
   // Make User ID available to the form.
-  $form['uid'] = array(
+  $form['author_uid'] = array(
     '#type' => 'value',
-    '#value' => $user_id,
+    '#value' => $note->author_uid,
   );
   // Make User ID available to the form.
   $form['note_id'] = array(
@@ -148,19 +124,89 @@ function _jdt_user_notes_form_definition($form, &$form_state, $nid) {
     '#type' => 'submit',
     '#value' => t('Save Note'),
   );
+  $form['#submit'][] = '_jdt_user_notes_edit_form_submit_handler';
   return $form;
 }
+
+function _jdt_user_notes_edit_form_submit_handler($form, &$form_state)
+{
+  $note = $form['#item'];
+  $note_id = $note->note_id;
+  $article_nid = $form_state['values']['article_nid'];
+  $author_uid = $form_state['values']['author_uid'];
+  $note_text = $form_state['values']['note_text'];
+  $entry = array(
+    'note_id' => $note_id,
+    'article_nid' => $article_nid,
+    'author_uid' => $author_uid,
+    'note_text' => $note_text
+  );
+  if(isset($note->note_id) && $note->note_id) {
+    dpm($entry);
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    $update = _jdt_user_notes_updt_note($entry);
+    if ($update == 1 ) {
+      $form_state['redirect'] = '<front>';
+      drupal_set_message(t('The note has been updated'), 'status');
+    }
+    else {
+      drupal_set_message(t('The note can\'t be updated'), 'error');
+    }
+  }
+}
+
+function jdt_user_notes_view_item_page($note) {
+  $page['jdt_user_notes_item_page'] = array
+  (
+    '#markup' => t('The value of the item is <em>@value</em>', array('@value' => $note->note_text)),
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+  );
+
+  return $page;
+}
+
+function _jdt_user_notes_delete_form($form, &$form_state, $note) {
+  $form['#item'] = $note;
+  $form['header'] = array(
+    '#markup' => t('Are you sure you wish to delete the note with the note_id <em>@value</em>?', array('@value' => $note->note_id)),
+    '#prefix' => '<h2>',
+    '#suffix' => '</h2>',
+  );
+  $form['warning'] = array(
+    '#markup' => t('Warning, this action cannot be undone'),
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+  );
+  $form['delete_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete item'),
+  );
+  return $form;
+}
+
+function jdt_user_notes_item_delete_form_submit($form, &$form_state) {
+  if($form_state['values']['op'] == $form_state['values']['delete_button']) {
+    $note = $form['#item'];
+    $note_id = $note->note_id;
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+    _jdt_user_notes_del_note($note_id);
+  }
+  $form_state['redirect'] = '<front>';
+  drupal_set_message(t('The item has been deleted'));
+}
+
 /**
 * Grab Note from the database.
 */
-function jdt_user_notes_note_exists($nid, $uid) {
+function jdt_user_notes_note_exists($article_nid, $author_uid) {
 // Grab values from the database.
 // Populate default value with the value stored.
 // in the database.
-  $result = db_select('jdt_user_notes', 'n')
-    ->fields('n')
-    ->condition('article_nid', $nid, "=")
-    ->condition('author_uid', $uid, "=")
+  $result = db_select('jdt_user_notes', 'jun')
+    ->fields('jun')
+    ->condition('article_nid', $article_nid, "=")
+    ->condition('author_uid', $author_uid, "=")
     ->execute()
     ->fetchAssoc();
   if (isset($result['note_text'])) {
@@ -172,96 +218,14 @@ function jdt_user_notes_note_exists($nid, $uid) {
 * Grab Note Id from the database.
 */
 function jdt_user_notes_note_id($nid, $uid) {
-  $result = db_select('jdt_user_notes', 'n')
-    ->fields('n')
+  $result = db_select('jdt_user_notes', 'jun')
+    ->fields('jun')
     ->condition('article_nid', $nid, "=")
     ->condition('author_uid', $uid, "=")
     ->execute()
     ->fetchAssoc();
     return $result['note_id'];
   }
-/**
- * Submit handler.
- */
-function jdt_user_notes_form_definition_submit($form, &$form_state) {
-  $values = $form_state['values'];
-//dpm($values);
-  $entry = array(
-    'note_text' => $form_state['values']['note_textfield'],
-    'author_uid' => $form_state['values']['uid'],
-    'article_nid' => $form_state['values']['nid'],
-    'note_id' => $form_state['values']['note_id'],
-  );
-  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  jdt_user_notes_updt($entry);
-  drupal_set_message(t('Your note has been added'));
-}
-
-/**
- * FIN TESSST of update part
- */
-
-/**
- * Function to select all the article titles.
- * @param
- *   String.
- */
-
-function _jdt_user_notes_all_users($string) {
-
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
-  }
-  drupal_json_output($matches);
-  exit;
-}
-
-/**
- * Function to select all the article titles.
- * @param
- *   String.
- */
-
-function _jdt_user_notes_select_all_articles($title) {
-
-  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$title%' AND type ='article_1'");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
-  }
-  drupal_json_output($matches);
-  exit;
-}
-
-/**
- * Implements hook_block_view().
- * @return
- *   Block.
- */
-
- function jdt_user_notes_block_view() {
-  $form = drupal_get_form('_jdt_user_notes_add_form');
-  $block = array(
-    'content' => $form,
-  );
-  return $block;
-}
-
-/**
- * Get the name concatenated to the user id of the current user.
- * @return
- *   username and uid
- */
-function _jdt_user_notes_get_current_user() {
-  global $user;
-  $user_id = $user->uid;
-  $user_name = $user->name;
-  $field_user = $user_name . '[uid:' . $user_id . ']';
-
-  return $field_user;
-}
 
 /**
  * Custom function to add a new user note to the database.
@@ -314,38 +278,12 @@ function _jdt_user_notes_add_form($form, &$form_state) {
 }
 
 /**
- * @param
- *   $field.
- * @return
- *   Uid.
- */
-
-function _jdt_user_notes_get_user_id($field) {
-  preg_match('/\[uid:(\d+)\]/', $field, $matches);
-  $uid = $matches[1];
-  return $uid;
-}
-
-/**
- * @param
- *   $field.
- * @return
- *   Nid.
- */
-function _jdt_user_notes_get_article_id($field) {
-  preg_match('/\[nid:(\d+)\]/', $field, $matches);
-  $nid = $matches[1];
-  return $nid;
-}
-
-/**
  * Add the data to be insert on the table.
  * @param
  *   $form.
  * @param
  *   $form_state.
  */
-
 function _jdt_user_notes_submit_handler($form, &$form_state) {
 
   $error = 1;
@@ -376,53 +314,13 @@ function _jdt_user_notes_submit_handler($form, &$form_state) {
 }
 
 /**
- * This function displays all the notes on a table.
- * @param
- *   The content type.
+ * Get the uid of the current user.
  * @return
- *   The table with the notes.
+ *   Current user uid
  */
-function _jdt_user_notes_get_all_notes($type = 'article_1') {
-  $result = db_query('SELECT jun.note_id, n.title, u.name, jun.note_text
-    FROM jdt_user_notes jun
-    INNER JOIN node n ON jun.article_nid = n.nid
-    INNER JOIN users u ON jun.author_uid = u.uid
-    WHERE n.type = :type', array(':type' => $type));
+function _jdt_user_notes_get_current_user_id() {
+  global $user;
+  $user_id = $user->uid;
 
-  $rows = array();
-  $i=0;
-  foreach ($result as $record) {
-    $rows[] = array_map('check_plain', (array)$record);
-    //Make some hyperlinks for editing and deleting
-    $rows[$i]['edit'] = l(t('Edit'), 'jdt_user_notes/update', array('query' => array('note_id' => $rows[$i]['note_id'])));
-    $rows[$i]['delete'] = l(t('Delete'), 'jdt_user_notes/delete/'.$rows[$i]['note_id']);
-    $i++;
-  }
-  $header = array(t('Note Id'), t('Article'), t('Author'), t('Note text'), t('Edit'), t('Delete'));
-  $output = theme('table', array('header' => $header, 'rows' => $rows));
-  $output .= l(t('Add Note'), 'jdt_user_notes/add');
-
-  return $output;
-}
-
-/**
- * This function call the delete function from the crud file to delete a specific note.
- * @param
- *   Note to be deleted.
- */
-function _jdt_user_notes_delete_note($note) {
-  $note = $_GET['note_id'];
-  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $deleting = _jdt_user_notes_del($note);
-  if ($deleting) {
-    drupal_set_message(t('Note has been deleted!'), 'status');
-    drupal_goto('jdt_user_notes/summary');
-  }
-  else {
-    drupal_set_message(t('Note can\'t be deleted!'), 'warning');
-  }
-}
-
-function _jdt_user_notes_callback_test($node) {
-
+  return $user_id;
 }
