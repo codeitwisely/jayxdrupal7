@@ -5,6 +5,10 @@
  * This file includes hooks for permissions and other.
  */
 
+// We include the crud file in order to use some available functions.
+// To make requests to the database.
+module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+
 /**
  * Implements hook_permission().
  * @return
@@ -12,23 +16,27 @@
  */
 function jdt_user_notes_permission() {
   return array(
-    'add_jdt_user_notes' => array(
+    'view user notes' => array(
+      'title' => t('View any user note'),
+      'description' => t('View any published user notes.'),
+    ),
+    'add user notes' => array(
       'title' => t('Create new user note'),
       'description' => t('Add user notes.'),
     ),
-    'edit_own_jdt_user_notes' => array(
+    'edit own user notes' => array(
       'title' => t('Edit own user note'),
       'description' => t('Edit own user notes.'),
     ),
-    'edit_any_jdt_user_notes' => array(
+    'edit any user notes' => array(
       'title' => t('Edit any user note'),
       'description' => t('Edit any user notes.'),
     ),
-    'delete_own_jdt_user_notes' => array(
+    'delete own user notes' => array(
       'title' => t('Delete own user note'),
       'description' => t('Delete own user notes.'),
     ),
-    'delete_any_jdt_user_notes' => array(
+    'delete any user notes' => array(
       'title' => t('Delete any user note'),
       'description' => t('Delete any user notes.'),
     ),
@@ -40,53 +48,41 @@ function jdt_user_notes_permission() {
  * @return
  *   Array of items.
  */
-
 function jdt_user_notes_menu() {
-  $items['jdt_user_notes/summary'] = array(
-    'title' => 'Displays all notes',
-    'page callback' => 'notes_summary',
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
-  );
-  $items['jdt-user-notes/update'] = array(
-    'title' => 'Update a note',
-    'page callback' => 'notes_update',
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
-  );
-  $items['jdt_user_notes/add'] = array(
-    'title' => 'Add a user note',
-    'description' => 'Add a new user note',
-    'page callback' => 'jdt_user_notes_block_view',
-    'access arguments' => array('access page manager'),
-    'expanded' => TRUE,
-  );
-  $items['note/%'] = array(
-    'title' => 'Add a user note',
-    'access_callback' => TRUE,
+  $items['jdt-user-notes/%jdt_user_notes/view'] = array(
+    'title' => 'View',
     'page callback' => 'drupal_get_form',
-    'access arguments' => array('Create new user note'),
-    'page_arguments' => array('jdt_user_notes_form_definition', 1),
+    'page arguments' => array('_jdt_user_notes_note_view', 1),
+    'access arguments' => array('view user notes'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['article/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_articles',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+  $items['jdt-user-notes/%node/add'] = array(
+    'title' => 'Add new note to an article',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('add user notes'),
+    'page arguments' => array('_jdt_user_notes_add_form', 1),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['user_un/autocomplete'] = array(
-    'title' => 'AutoComp Menu',
-    'page callback' => 'select_all_users',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+  $items['jdt-user-notes/%jdt_user_notes/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_jdt_user_notes_edit_form', 1),
+    'access arguments' => array('edit own user notes'),
+    'type' => MENU_LOCAL_TASK,
   );
-  // Display the My Notes tab only if notes exist.
+  $items['jdt-user-notes/%jdt_user_notes/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_jdt_user_notes_delete_form', 1),
+    'access arguments' => array('delete own user notes'),
+    'type' => MENU_LOCAL_TASK,
+  );
   $items['node/%node/note'] = array(
     'title' => 'My Notes',
-    'description' => 'Display articles related to an article',
-    'page callback' => 'jdt_user_notes_display_notes',
+    'description' => 'Display notes related to an article',
+    'page callback' => '_jdt_user_notes_display_notes',
     'page arguments' => array(1),
-    'access callback' => 'jdt_user_notes_note_exist',
+    'access callback' => '_jdt_user_notes_get_note',
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
@@ -94,42 +90,127 @@ function jdt_user_notes_menu() {
 }
 
 /**
- * BEGIN TEST with wildcard.
+ * Custom function to add a new user note to the database.
+ * @param $form
+ *   The add note form.
+ * @param $form_state
+ *   The form elements available.
+ * @param $node
+ *   The object node to get the nid passed in the url.
+ * @return
+ *   The add note form for an article which nid is passed on the url.
  */
-
-/**
-* Form definition. for updating a note.
-*/
-function jdt_user_notes_form_definition($form, &$form_state, $nid) {
-  global $user;
-  $user_id = $user->uid;
-
-  $default_value_note = jdt_user_notes_note_exists($nid, $user_id);
-  $default_note_id = jdt_user_notes_note_id($nid, $user_id);
-  $form['fieldset'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Note to Article'),
-    '#default_value' => 'Hello',
-  );
-  $form['fieldset']['note_textfield'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Note'),
-    '#default_value' => $default_value_note,
-  );
-
-  // Grab value for node id and make it part of the form state.
-  // so you can use it later.
-  $form['nid'] = array(
+function _jdt_user_notes_add_form($form, &$form_state, $node) {
+  $form['#item'] = $node;
+  $node_id = $node->nid;
+  $user_id = _jdt_user_notes_get_current_user_id();
+  $form['article_nid'] = array(
     '#type' => 'value',
-    '#value' => $nid,
+    '#value' => $node_id,
   );
-
-  // Make User ID available to the form.
-  $form['uid'] = array(
+  $form['author_uid'] = array(
     '#type' => 'value',
     '#value' => $user_id,
   );
+  $form['note_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Note text',
+    '#cols' => 60  ,
+    '#rows' => 5,
+    '#maxlength' => 100,
+    '#required' => TRUE,
+  );
+  // now I add also a button.
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add user note'),
+  );
+  $form['#submit'][] = '_jdt_user_notes_add_form_submit_handler';
+  return $form;
+}
+
+/**
+ * Add the data to be insert on the table.
+ * @param $form
+ *   The add note form.
+ * @param $form_state
+ *   The form elements available.
+ */
+function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
+  $node = $form['#item'];
+  $article_nid = $node->nid;
+  $author_uid = $form_state['values']['author_uid'];
+  $note_text = $form_state['values']['note_text'];
+  $entry = array(
+    'article_nid' => $article_nid,
+    'author_uid' => $author_uid,
+    'note_text' => $note_text
+  );
+  if (isset($node->nid) && $node->nid) {
+    $create = _jdt_user_notes_create_note($entry);
+  }
+  $form_state['redirect'] = '<front>';
+  drupal_set_message(t('The note has been added'), 'status');
+}
+
+/**
+ * Return the note_text for a note.
+ * @param $form
+ *   The view form.
+ * @param $form_state
+ *   The form elemenets available.
+ * @param $note
+ *   The note object.
+ * @return
+ *   The note_text field for the note_id passed in the url.
+ */
+function _jdt_user_notes_note_view($form, &$form_state, $note) {
+  $note_id = $note->note_id;
+  $select = _jdt_user_notes_note_select($note_id);
+  $form['note_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Note'),
+    '#disabled' => TRUE,
+    '#default_value' => $select['note_text'],
+  );
+  return $form;
+}
+
+/**
+ * Return the note edit form.
+ * @param $form
+ *   The edit note form.
+ * @param $form_state
+ *   The form elements available.
+ * @param $note
+ *   The note object.
+ * @return
+ *   The note edit form.
+ */
+function _jdt_user_notes_edit_form($form, &$form_state, $note) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  $form['#item'] = $note;
+  $article_id = $note->article_nid;
+  $default_value_note = _jdt_user_notes_note_exists($article_id, $user_id);
+  $default_note_id = _jdt_user_notes_note_id($article_id, $user_id);
+  $form['note_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Note'),
+    '#required' => TRUE,
+    '#default_value' => $default_value_note,
+  );
+  // Grab value for node id and make it part of the form state.
+  // so you can use it later.
+  $form['article_nid'] = array(
+    '#type' => 'value',
+    '#value' => $note->article_nid,
+  );
   // Make User ID available to the form.
+  $form['author_uid'] = array(
+    '#type' => 'value',
+    '#value' => $note->author_uid,
+  );
+  // Make note ID available to the form.
   $form['note_id'] = array(
     '#type' => 'value',
     '#value' => $default_note_id,
@@ -138,247 +219,172 @@ function jdt_user_notes_form_definition($form, &$form_state, $nid) {
     '#type' => 'submit',
     '#value' => t('Save Note'),
   );
+  $form['#submit'][] = '_jdt_user_notes_edit_form_submit_handler';
   return $form;
 }
+
 /**
-* Grab Note from the database.
-*/
-function jdt_user_notes_note_exists($nid, $uid) {
-// Grab values from the database.
-// Populate default value with the value stored.
-// in the database.
-  $result = db_select('jdt_user_notes', 'n')
-    ->fields('n')
-    ->condition('article_nid', $nid, "=")
-    ->condition('author_uid', $uid, "=")
-    ->execute()
-    ->fetchAssoc();
-  if(isset($result['note_text'])) {
-    return $result['note_text'];
-  }
-  return '';
-}
-/**
-* Grab Note Id from the database.
-*/
-function jdt_user_notes_note_id($nid, $uid) {
-  $result = db_select('jdt_user_notes', 'n')
-    ->fields('n')
-    ->condition('article_nid', $nid, "=")
-    ->condition('author_uid', $uid, "=")
-    ->execute()
-    ->fetchAssoc();
-    return $result['note_id'];
-  }
-/**
- * Submit handler.
+ * This is the submit handler for the edting of a note which id is passed on URL.
+ * @param $form
+ *   The editng note form.
+ * @param $form_state
+ *   The form elements available.
  */
-function jdt_user_notes_form_definition_submit($form, &$form_state) {
-  $values = $form_state['values'];
-//dpm($values);
+function _jdt_user_notes_edit_form_submit_handler($form, &$form_state) {
+  $note = $form['#item'];
+  $note_id = $note->note_id;
+  $article_nid = $form_state['values']['article_nid'];
+  $author_uid = $form_state['values']['author_uid'];
+  $note_text = $form_state['values']['note_text'];
   $entry = array(
-    'note_text' => $form_state['values']['note_textfield'],
-    'author_uid' => $form_state['values']['uid'],
-    'article_nid' => $form_state['values']['nid'],
-    'note_id' => $form_state['values']['note_id'],
+    'note_id' => $note_id,
+    'article_nid' => $article_nid,
+    'author_uid' => $author_uid,
+    'note_text' => $note_text
   );
-  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  jdt_user_notes_updt($entry);
-  drupal_set_message(t('Your note has been added'));
-}
-
-/**
- * FIN TESSST of update part
- */
-
-/**
- * Function to select all the article titles
- * @param
- *   String.
- */
-
-function select_all_users($string) {
-
-  $result = db_query("SELECT uid,name FROM {users} WHERE name LIKE '%$string%' AND status = 1");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->name . '[uid:' . $item->uid . ']'] = check_plain($item->name);
-  }
-  drupal_json_output($matches);
-  exit;
-}
-
-/**
- * Function to select all the article titles
- * @param
- *   String.
- */
-
-function select_all_articles($string) {
-
-  $result = db_query("SELECT nid,title FROM {node} WHERE title LIKE '%$string%' AND type ='article_1'");
-  $matches = array();
-  foreach ($result as $item) {
-    $matches[$item->title . '[nid:' . $item->nid . ']'] = check_plain($item->title);
-  }
-  drupal_json_output($matches);
-  exit;
-}
-
-/**
- * Implements hook_block_view().
- * @return
- *   Block.
- */
-
- function jdt_user_notes_block_view() {
-  $form = drupal_get_form('jdt_user_notes_add_form');
-  $block = array(
-    'content' => $form,
-  );
-  return $block;
-}
-
-/**
- * get current user.
- * @return
- *   User[uid:uidnumber].
- */
-function get_current_user_custom() {
-  global $user;
-  $user_id = $user->uid;
-  $user_name = $user->name;
-  $field_user = $user_name . '[uid:' . $user_id . ']';
-
-  return $field_user;
-}
-
-/**
- * Custom function to add a new user note to the database
- * @param
- *   $form
- * @param
- *   $form_state
- * @return
- *   Form.
- */
-
-function jdt_user_notes_add_form($form, &$form_state) {
-
-  $form['article_nid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Article'),
-    '#size' => 30,
-    '#maxlength' => 100,
-    '#autocomplete_path' => 'article/autocomplete',
-    '#required' => TRUE,
-  );
-
-  $form['author_uid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Authored by'),
-    '#size' => 30,
-    '#maxlength' => 100,
-    '#default_value' => get_current_user_custom(),
-    '#required' => TRUE,
-  );
-
-  $form['note_text'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Note text',
-      '#size' => 30,
-      '#maxlength' => 100,
-      '#required' => TRUE,
-  );
-
-  // now I add also a button
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Add user note'),
-  );
-
-  $form['#submit'][] = 'jdt_user_notes_submit_handler';
-  return $form;
-}
-
-/**
- * @param
- *   $field.
- * @return
- *   Uid
- */
-
-function get_autocomplete_user_id($field) {
-  preg_match('/\[uid:(\d+)\]/', $field, $matches);
-  $uid = $matches[1];
-  return $uid;
-}
-
-/**
- * @param
- *   $field.
- * @return
- *   Nid
- */
-function get_autocomplete_article_id($field) {
-  preg_match('/\[nid:(\d+)\]/', $field, $matches);
-  $nid = $matches[1];
-  return $nid;
-}
-
-/**
- * Add the data to be insert on the table
- * @param
- *   $form
- * @param
- *   $form_state
- */
-
-function jdt_user_notes_submit_handler($form, &$form_state) {
-
-  $error = 1;
-    if ( !isset($form_state['values']['note_text']) || $form_state['values']['note_text'] > 0) {
-    $error = 0 ;
-  }
-
-  if ($error) {
-    $article_id = get_autocomplete_article_id($form_state['values']['article_nid']);
-    $author_id = get_autocomplete_user_id($form_state['values']['author_uid']);
-    $text = $form_state['values']['note_text'];
-    $entry = array(
-        'article_nid' => $article_id,
-        'author_uid' => $author_id,
-        'note_text' => $text,
-    );
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-    $add = jdt_user_notes_create($entry);
-
-    if ($add) {
-      drupal_set_message(t('Record has been added!'));
-      drupal_goto('<front>');
+  if (isset($note_id) && $note_id) {
+    $update = _jdt_user_notes_updt_note($entry);
+    if ($update == 1 ) {
+      $form_state['redirect'] = '<front>';
+      drupal_set_message(t('The note has been updated'), 'status');
     }
     else {
-      drupal_set_message(t('Record can\'t be added!'), 'warning');
+      drupal_set_message(t('The note can\'t be updated'), 'error');
     }
   }
 }
+
+/**
+ * Return the form to delete a note which id is passed in the url.
+ * @param $form
+ *   The delete note form.
+ * @param $form_state
+ *   The form elements available.
+ * @param $note
+ *   The note object.
+ * @return
+ *   Return the delete form form a note.
+ */
+function _jdt_user_notes_delete_form($form, &$form_state, $note) {
+  $form['#item'] = $note;
+  $form['header'] = array(
+    '#markup' => t('Are you sure you wish to delete the note with the note_id <em>@value</em>?', array('@value' => $note->note_id)),
+    '#prefix' => '<h2>',
+    '#suffix' => '</h2>',
+  );
+  $form['warning'] = array(
+    '#markup' => t('Warning, this action cannot be undone'),
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+  );
+  $form['delete_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete note'),
+  );
+  return $form;
+}
+
+/**
+ * This function is the handler on delete form submission.
+ * @param $form
+ *   The delete note form.
+ * @param $form_state
+ *   The note form elements available.
+ */
+function _jdt_user_notes_delete_form_submit($form, &$form_state) {
+  if ($form_state['values']['op'] == $form_state['values']['delete_button']) {
+    $note = $form['#item'];
+    $note_id = $note->note_id;
+    _jdt_user_notes_del_note($note_id);
+  }
+  $form_state['redirect'] = '<front>';
+  drupal_set_message(t('The item has been deleted'));
+}
+
+/**
+ * Get the uid of the current user.
+ * @return
+ *   Current user uid.
+ */
+function _jdt_user_notes_get_current_user_id() {
+  global $user;
+  $user_id = $user->uid;
+
+  return $user_id;
+}
+
+/**
+ * Task 21.
+ * Task 21.
+ */
 
 /**
  * Implements hook_theme().
- * @return
- * Array.
  */
-
 function jdt_user_notes_theme() {
   return array(
+  // placeholders to hold initial values.
     'jdt-article-notes' => array(
       'variables' => array(
-      'NOTE_TEXT' => 'Test Note linked to test node',
-      'NODE_TITLE' => 'Test Node',
-      'NODE_AUTHOR' => 'Test Node Author',
+        'NOTE_TEXT' => 'Test Note linked to test node',
+        'NODE_TITLE' => 'Test Node',
+        'NODE_AUTHOR' => 'Test Node Author',
       ),
-      'template' => 'theme/dt_custom',
+      'template' => 'theme/jdt_user_notes_theming',
     ),
   );
 }
 
+/**
+ * Function to display notes for an article.
+ * @param $node
+ *   The article_id for which we want to display notes.
+ * @return
+ *   An array with values for note_author note_text and node_title.
+ */
+function _jdt_user_notes_display_notes($node) {
+  global $user;
+  // Add JS to add functionality
+  drupal_add_library('system', 'ui.dialog');
+  drupal_add_js(drupal_get_path('module','jdt_user_notes').'/jdt_user_notes_theming.js');
+  // Pass values to Javascript
+  $node_id = $node->nid;
+  $form = drupal_get_form('_jdt_user_form_notes_form_definition', $node->nid);
+  //dpm($form);
+  $my_settings = array(
+    'nid' => $node_id,
+    'form' => $form,
+  );
+  drupal_add_js(array('jdt_article_notes_theming' => $my_settings), 'setting');
+  // Initialize default values of variables
+  // If no values exist, then default values get populated
+  $vars = array('NOTE_TEXT' => 'NOTE_TEXT', 'NODE_TITLE' => 'NODE_TITLE', 'NODE_AUTHOR' => 'NODE_AUTHOR');
+  $articles = _jdt_user_notes_note($node->nid);
+  // Return Node Title
+  $node_title = $node->title;
+  // Return Node Author.
+  // dsm(user_load($node->uid)).
+  $node_author = $user->name;
+  return array(
+    '#theme' => 'jdt-article-notes',
+    '#NOTE_TEXT' => $articles,
+    '#NODE_TITLE' => $node_title,
+    '#NODE_AUTHOR' => $node_author,
+  );
+}
+
+/**
+ * We Create a tab for notes only if notes exist for a given article.
+ * @param $node
+ *   The node object that we want to get.
+ * @return
+ *   Return true if there is no notes for an article.
+ */
+function _jdt_user_notes_get_note($node) {
+  // Grab articles from the DB
+  $articles = _jdt_user_notes_note($node->nid);
+  // If no articles, don`t create a TAB
+  if($articles != ''){
+    return TRUE;
+  }
+}
