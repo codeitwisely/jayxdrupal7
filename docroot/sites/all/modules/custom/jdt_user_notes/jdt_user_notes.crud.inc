@@ -7,6 +7,7 @@
 
 /**
  * Function to return a table entry for the jdt_user_notes table.
+ *
  * According to the note_id.
  * @param $note_id
  *   The note_id for which we want to see the db entry.
@@ -24,6 +25,7 @@ function _jdt_user_notes_note_select($note_id) {
 
 /**
  * Function to load entries from the DB.
+ *
  * @param $entry
  *   Array of fields to be selected on the jdt_user_notes table.
  * @return
@@ -42,6 +44,7 @@ function _jdt_user_notes_entry_load($entry = array()) {
 
 /**
  * Function to delete a note.
+ *
  * @param $note_id
  *   The note_id to delete.
  * @return
@@ -65,6 +68,7 @@ function _jdt_user_notes_del_note($note_id) {
 
 /**
  * Function to update a note.
+ *
  * @param $entry
  *   Array of fields to be updated on the DB.
  * @return
@@ -89,6 +93,7 @@ function _jdt_user_notes_updt_note($entry = array()) {
 
 /**
  * Function to add a note to an existing Article.
+ *
  * @param $entry
  *   Array of fields to insert on the DB.
  * @return
