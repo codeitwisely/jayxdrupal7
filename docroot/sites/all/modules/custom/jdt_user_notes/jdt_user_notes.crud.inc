@@ -157,7 +157,7 @@ function _jdt_user_notes_note_id($article_nid, $author_uid) {
 function _jdt_user_notes_note($nid) {
   // Grab values from the database.
   $result = db_select('jdt_user_notes', 'jun')
-    ->fields('n')
+    ->fields('jun')
     ->condition('article_nid', $nid, "=")
     ->execute()
     ->fetchAssoc();

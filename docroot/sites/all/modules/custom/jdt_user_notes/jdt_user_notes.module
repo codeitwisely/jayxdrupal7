@@ -324,7 +324,7 @@ function _jdt_user_notes_get_current_user_id() {
 function jdt_user_notes_theme() {
   return array(
   // placeholders to hold initial values.
-    'jdt-article-notes' => array(
+    'jdt-user-notes' => array(
       'variables' => array(
         'NOTE_TEXT' => 'Test Note linked to test node',
         'NODE_TITLE' => 'Test Node',
@@ -338,35 +338,17 @@ function jdt_user_notes_theme() {
 /**
  * Function to display notes for an article.
  * @param $node
- *   The article_id for which we want to display notes.
+ *   The node object for which we want to display notes.
  * @return
  *   An array with values for note_author note_text and node_title.
  */
 function _jdt_user_notes_display_notes($node) {
   global $user;
-  // Add JS to add functionality
-  drupal_add_library('system', 'ui.dialog');
-  drupal_add_js(drupal_get_path('module','jdt_user_notes').'/jdt_user_notes_theming.js');
-  // Pass values to Javascript
-  $node_id = $node->nid;
-  $form = drupal_get_form('_jdt_user_form_notes_form_definition', $node->nid);
-  //dpm($form);
-  $my_settings = array(
-    'nid' => $node_id,
-    'form' => $form,
-  );
-  drupal_add_js(array('jdt_article_notes_theming' => $my_settings), 'setting');
-  // Initialize default values of variables
-  // If no values exist, then default values get populated
-  $vars = array('NOTE_TEXT' => 'NOTE_TEXT', 'NODE_TITLE' => 'NODE_TITLE', 'NODE_AUTHOR' => 'NODE_AUTHOR');
   $articles = _jdt_user_notes_note($node->nid);
-  // Return Node Title
   $node_title = $node->title;
-  // Return Node Author.
-  // dsm(user_load($node->uid)).
   $node_author = $user->name;
   return array(
-    '#theme' => 'jdt-article-notes',
+    '#theme' => 'jdt-user-notes',
     '#NOTE_TEXT' => $articles,
     '#NODE_TITLE' => $node_title,
     '#NODE_AUTHOR' => $node_author,
@@ -381,9 +363,7 @@ function _jdt_user_notes_display_notes($node) {
  *   Return true if there is no notes for an article.
  */
 function _jdt_user_notes_get_note($node) {
-  // Grab articles from the DB
   $articles = _jdt_user_notes_note($node->nid);
-  // If no articles, don`t create a TAB
   if($articles != ''){
     return TRUE;
   }

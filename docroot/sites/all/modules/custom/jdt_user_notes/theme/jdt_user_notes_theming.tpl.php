@@ -2,17 +2,17 @@
 <div class="note-container">
   <?php if ($NOTE_TEXT): ?>
   <div class="note-text">
-    <?php print $NOTE_TEXT; ?>
+    <p>Note text : <span><?php print $NOTE_TEXT; ?></span></p>
   </div>
   <?php endif; ?>
   <?php if ($NODE_TITLE): ?>
   <div class="node-title">
-    <?php print $NODE_TITLE; ?>
+    <p>Title : <span><?php print $NODE_TITLE; ?></span></p>
   </div>
   <?php endif; ?>
   <?php if ($NODE_AUTHOR): ?>
   <div class="node-author">
-    <?php print $NODE_AUTHOR; ?>
+    <p>Author : <span><?php print $NODE_AUTHOR; ?></span></p>
   </div>
   <?php endif; ?>
 </div>
