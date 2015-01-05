@@ -95,7 +95,7 @@ function _jdt_user_notes_updt_note($entry = array()) {
  *   Return the last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
-  try{
+  try {
     $return_value = db_insert('jdt_user_notes')
       ->fields($entry)
       ->execute();
