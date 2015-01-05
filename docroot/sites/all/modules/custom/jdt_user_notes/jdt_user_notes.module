@@ -208,7 +208,7 @@ function _jdt_user_notes_edit_form($form, &$form_state, $note) {
   // Make note ID available to the form.
   $form['note_id'] = array(
     '#type' => 'value',
-    '#value' => $default_note_id,
+    '#value' => $default_value_note,
   );
   $form['submit'] = array(
     '#type' => 'submit',
@@ -293,7 +293,7 @@ function _jdt_user_notes_delete_form_submit($form, &$form_state) {
     _jdt_user_notes_del_note($note_id);
   }
   $form_state['redirect'] = '<front>';
-  drupal_set_message(t('The item has been deleted'));
+  drupal_set_message(t('The note has been deleted'));
 }
 
 /**
