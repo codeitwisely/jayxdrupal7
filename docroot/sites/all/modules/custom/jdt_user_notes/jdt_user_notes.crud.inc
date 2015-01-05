@@ -88,7 +88,7 @@ function _jdt_user_notes_updt_note($entry = array()) {
  *   Return the last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
-  try{
+  try {
     $return_value = db_insert('jdt_user_notes')
       ->fields($entry)
       ->execute();
@@ -99,7 +99,6 @@ function _jdt_user_notes_create_note($entry = array()) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-
   return FALSE;
 }
 
@@ -113,9 +112,6 @@ function _jdt_user_notes_create_note($entry = array()) {
  *   The note_text field of the jdt_user_notes table or an empty string.
  */
 function _jdt_user_notes_note_exists($article_nid, $author_uid) {
-// Grab values from the database.
-// Populate default value with the value stored.
-// in the database.
   $result = db_select('jdt_user_notes', 'jun')
     ->fields('jun')
     ->condition('article_nid', $article_nid, "=")
@@ -129,7 +125,7 @@ function _jdt_user_notes_note_exists($article_nid, $author_uid) {
 }
 
 /**
- * Grab Note Id from the database.
+ * Grab Note Id from jdt user notes table.
  * @param $article_nid
  *   The article nid of the note.
  * @param $author_uid
