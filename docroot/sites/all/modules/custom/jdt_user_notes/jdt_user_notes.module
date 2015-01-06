@@ -357,12 +357,12 @@ function jdt_user_notes_theme() {
  */
 function _jdt_user_notes_display_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $articles = _jdt_user_notes_note($node->nid);
+  $note_text = _jdt_user_notes_article_notes($node->nid);
   $node_title = $node->title;
   $node_author = _jdt_user_notes_get_article_author($node->nid);
   return array(
     '#theme' => 'jdt-user-notes',
-    '#note_text' => $articles,
+    '#note_text' => $note_text,
     '#node_title' => $node_title,
     '#node_author' => $node_author,
   );
@@ -377,7 +377,8 @@ function _jdt_user_notes_display_notes($node) {
  *   Return true if there is no notes for an article.
  */
 function _jdt_user_notes_get_note($node) {
-  $articles = _jdt_user_notes_note($node->nid);
+  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+  $articles = _jdt_user_notes_article_notes($node->nid);
   if($articles != ''){
     return TRUE;
   }

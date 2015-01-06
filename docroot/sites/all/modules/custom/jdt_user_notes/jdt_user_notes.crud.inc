@@ -86,17 +86,16 @@ function _jdt_user_notes_create_note($entry = array()) {
  * @return
  *   The note_text or an empty string.
  */
-function _jdt_user_notes_note($nid) {
+function _jdt_user_notes_article_notes($nid) {
   // Grab values from the database.
-  $result = db_select('jdt_user_notes', 'jun')
-    ->fields('jun')
-    ->condition('article_nid', $nid, "=")
-    ->execute()
-    ->fetchAssoc();
-  // If a note exists, return it, else return empty.
-  if(isset($result['note_text'])) {
-    return $result['note_text'];
-  }
+  $query = db_select('jdt_user_notes', 'jun');
+  $query->join('node', 'n', 'jun.article_nid = n.nid');
+  $query->fields('jun')
+    ->condition('n.nid', $nid, "=");
+  $result = $query->execute();
+  while($record = $result->fetchAssoc()) {
+    return $record['note_text'];
+    }
   return '';
 }
 
