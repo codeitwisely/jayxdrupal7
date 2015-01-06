@@ -78,6 +78,17 @@ function jdt_user_notes_menu() {
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
+  $items['jdt-user-notes/%ctools_js'] = array(
+    'page callback' => 'jdt_user_notes_callback',
+    'page arguments' => array(1),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['modal/page'] = array(
+    'page callback' => 'jdt_user_notes_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -146,6 +157,7 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
   $article_nid = $node->nid;
   $author_uid = $form_state['values']['author_uid'];
   $note_text = $form_state['values']['note_text'];
+  // Tell the browser to close the modal.
   $entry = array(
     'article_nid' => $article_nid,
     'author_uid' => $author_uid,
@@ -154,9 +166,11 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
   if (isset($node->nid) && $node->nid) {
     module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
     $create = _jdt_user_notes_create_note($entry);
+    dpm($create);
   }
   $form_state['redirect'] = '<front>';
   drupal_set_message(t('The note has been added'), 'status');
+  $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
 }
 
 /**
@@ -341,6 +355,7 @@ function jdt_user_notes_theme() {
         'note_text' => FALSE,
         'node_title' => FALSE,
         'node_author' => FALSE,
+        'add' => FALSE,
       ),
       'template' => 'theme/jdt-user-notes-theming',
     ),
@@ -360,11 +375,13 @@ function _jdt_user_notes_display_notes($node) {
   $note_text = _jdt_user_notes_article_notes($node->nid);
   $node_title = $node->title;
   $node_author = _jdt_user_notes_get_article_author($node->nid);
+  $add = _jdt_user_notes_make_link($link_text = '');
   return array(
     '#theme' => 'jdt-user-notes',
     '#note_text' => $note_text,
     '#node_title' => $node_title,
     '#node_author' => $node_author,
+    '#add' => $add,
   );
 }
 
@@ -382,4 +399,96 @@ function _jdt_user_notes_get_note($node) {
   if($articles != ''){
     return TRUE;
   }
+}
+
+/**
+ * Task 24
+ */
+
+/**
+ * Helper function to make a link.
+ */
+function _jdt_user_notes_make_link($link_text = '') {
+  ctools_include('modal');
+  ctools_modal_add_js();
+  // Set a default value if no text in supplied.
+  if (empty($link_text)) {
+    $link_text = 'Add note';
+  }
+   return ' ' . l($link_text, 'jdt-user-notes/nojs', array('attributes' => array('class' => 'ctools-use-modal'))) . ' ';
+}
+
+/**
+ * An example page.
+ */
+function jdt_user_notes_page() {
+  // Load the modal library and add the modal javascript.
+  ctools_include('modal');
+  ctools_modal_add_js();
+  return _jdt_user_notes_make_link('Magical modal');
+}
+
+/**
+* Ajax menu callback.
+*/
+function jdt_user_notes_callback($ajax) {
+  if ($ajax) {
+    ctools_include('ajax');
+    ctools_include('modal');
+
+    $form_state = array(
+      'ajax' => TRUE,
+      'title' => t('MyModule Modal Form'),
+    );
+
+    // Use ctools to generate ajax instructions for the browser to create
+    // a form in a modal popup.
+    $output = ctools_modal_form_wrapper('_jdt_user_notes_add_form', $form_state);
+
+    // If the form has been submitted, there may be additional instructions
+    // such as dismissing the modal popup.
+    if (!empty($form_state['ajax_commands'])) {
+      $output = $form_state['ajax_commands'];
+    }
+
+    // Return the ajax instructions to the browser via ajax_render().
+    print ajax_render($output);
+    drupal_exit();
+  }
+  else {
+    return drupal_get_form('_jdt_user_notes_add_form');
+  }
+}
+
+/**
+* Drupal form to be put in a modal.
+*/
+function jdt_user_notes_form($form, $form_state) {
+  $form = array();
+
+  $form['new_link_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link text'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  return $form;
+}
+
+/**
+* Drupal form submit handler.
+*/
+function jdt_user_notes_form_submit(&$form, &$form_state) {
+  // Generate the new link using the submitted text value.
+  $link = _jdt_user_notes_make_link($form_state['values']['new_link_text']);
+
+  // Tell the browser to close the modal.
+  $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+
+  // Tell the browser to replace the old link with the new one.
+  $form_state['ajax_commands'][] = ajax_command_replace('#magical-modal-link', $link);
 }
