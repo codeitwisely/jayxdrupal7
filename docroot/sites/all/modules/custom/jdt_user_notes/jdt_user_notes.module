@@ -41,7 +41,7 @@ function jdt_user_notes_permission() {
  * Implements hook_menu().
  */
 function jdt_user_notes_menu() {
-  $items['jdt-user-notes/%jdt_user_notes/view'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/view'] = array(
     'title' => 'View',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_note_view', 1),
@@ -53,11 +53,11 @@ function jdt_user_notes_menu() {
     'title' => 'Add new note to an article',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_add_form', 1),
-    'access arguments' => array('add user notes'),
-    // 'access callback' => 'add user notes',
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['jdt-user-notes/%jdt_user_notes/edit'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_edit_form', 1),
@@ -65,7 +65,7 @@ function jdt_user_notes_menu() {
     // 'access callback' => 'edit own user notes',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['jdt-user-notes/%jdt_user_notes/delete'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_delete_form', 1),
@@ -77,15 +77,34 @@ function jdt_user_notes_menu() {
 }
 
 /**
- * Loader for getting notes in object format for a given not_id.
+ * Function to manage access permissions to notes
+ * @return
+ *   True o false.
+ */
+function _jdt_user_notes_callback_function($node) {
+  dpm($nid);
+  die();
+  // global $user;
+  // if ($node->uid == $user->uid && user_access('edit own user notes')) {
+  //   return TRUE;
+  // }
+  // return FALSE;
+}
+
+/**
+ * Loader for getting notes in object format for a given note_id.
  *
  * @param $note_id
  *   The note_id to load.
  * @return
- *   Return results in object format.
+ *   Return result in object format.
  */
-function jdt_user_notes_load($note_id) {
-  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
+function _jdt_user_notes_custom_load($note_id) {
+  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+  $select = _jdt_user_notes_select_note($note_id);
+  if ($select == 1) {
+    return $select;
+  }
 }
 
 /**
