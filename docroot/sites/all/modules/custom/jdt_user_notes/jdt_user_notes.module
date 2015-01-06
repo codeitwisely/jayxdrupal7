@@ -5,10 +5,6 @@
  * This file includes hooks for permissions and other.
  */
 
-// We include the crud file in order to use some available functions.
-// To make requests to the database.
-module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-
 /**
  * Implements hook_permission().
  */
@@ -49,9 +45,10 @@ function jdt_user_notes_menu() {
     'title' => 'View',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_note_view', 1),
-    // 'access arguments' => array('view user notes'),
-    'access callback' => 'view user notes',
+    'access arguments' => array('view user notes'),
+    // 'access callback' => 'view user notes',
     'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'jdt_user_notes.crud.inc',
   );
   $items['jdt-user-notes/%node/add'] = array(
     'title' => 'Add new note to an article',
@@ -59,6 +56,7 @@ function jdt_user_notes_menu() {
     'page arguments' => array('_jdt_user_notes_add_form', 1),
     'access arguments' => array('add user notes'),
     // 'access callback' => 'add user notes',
+    'file' => 'jdt_user_notes.crud.inc',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['jdt-user-notes/%jdt_user_notes/edit'] = array(
@@ -67,17 +65,31 @@ function jdt_user_notes_menu() {
     'page arguments' => array('_jdt_user_notes_edit_form', 1),
     'access arguments' => array('edit own user notes'),
     // 'access callback' => 'edit own user notes',
+    'file' => 'jdt_user_notes.crud.inc',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['jdt-user-notes/%jdt_user_notes/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_delete_form', 1),
-    // 'access arguments' => array('delete own user notes'),
-    'access callback' => 'delete own user notes',
+    'access arguments' => array('delete own user notes'),
+    // 'access callback' => 'delete own user notes',
+    'file' => 'jdt_user_notes.crud.inc',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   return $items;
+}
+
+/**
+ * Loader for getting notes in object format for a given not_id.
+ *
+ * @param $note_id
+ *   The note_id to load.
+ * @return
+ *   Return results in object format.
+ */
+function jdt_user_notes_load($note_id) {
+  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
 }
 
 /**
@@ -139,6 +151,7 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
     'note_text' => $note_text
   );
   if (isset($node->nid) && $node->nid) {
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
     $create = _jdt_user_notes_create_note($entry);
   }
   $form_state['redirect'] = '<front>';
@@ -158,7 +171,6 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
  *   The note_text field for the note_id passed in the url.
  */
 function _jdt_user_notes_note_view($form, &$form_state, $note) {
-  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   $note_id = $note->note_id;
   $select = jdt_user_notes_load($note_id);
   $form['note_text'] = array(
