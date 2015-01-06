@@ -109,7 +109,6 @@ function _jdt_user_notes_add_form($form, &$form_state, $node) {
     '#title' => t('Note text'),
     '#cols' => 60  ,
     '#rows' => 5,
-    '#maxlength' => 100,
     '#required' => TRUE,
   );
   // now I add also a button.
@@ -159,6 +158,7 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
  *   The note_text field for the note_id passed in the url.
  */
 function _jdt_user_notes_note_view($form, &$form_state, $note) {
+  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   $note_id = $note->note_id;
   $select = jdt_user_notes_load($note_id);
   $form['note_text'] = array(
@@ -237,6 +237,7 @@ function _jdt_user_notes_edit_form_submit_handler($form, &$form_state) {
     'note_text' => $note_text
   );
   if (isset($note_id) && $note_id) {
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
     $update = _jdt_user_notes_updt_note($entry);
     if ($update == 1 ) {
       $form_state['redirect'] = '<front>';
@@ -291,6 +292,7 @@ function _jdt_user_notes_delete_form_submit($form, &$form_state) {
   if ($form_state['values']['op'] == $form_state['values']['delete_button']) {
     $note = $form['#item'];
     $note_id = $note->note_id;
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
     _jdt_user_notes_del_note($note_id);
   }
   $form_state['redirect'] = '<front>';
