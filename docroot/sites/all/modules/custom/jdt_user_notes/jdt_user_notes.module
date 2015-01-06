@@ -426,9 +426,9 @@ function _jdt_user_notes_content_number() {
   $number_of_articles = _jdt_user_notes_number_articles();
   $number_of_notes = _jdt_user_notes_number_notes();
   $number_of_users = _jdt_user_notes_number_users();
-  $output = "Number of Articles: " . $number_of_articles . "<br/>";
-  $output .= "Number of Notes: " . $number_of_notes . "<br/>";
-  $output .= "Number of Users: " . $number_of_users;
+  $output = t('Number of Articles') . : . $number_of_articles . "<br/>";
+  $output .= t('Number of Notes') . : . $number_of_notes . "<br/>";
+  $output .= t('Number of Users') . : . $number_of_users;
 
   return $output;
 }
