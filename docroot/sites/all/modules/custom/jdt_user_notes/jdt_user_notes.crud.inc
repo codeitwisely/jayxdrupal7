@@ -6,18 +6,6 @@
  */
 
 /**
- * Loader for getting notes in object format for a given not_id.
- *
- * @param $note_id
- *   The note_id to load.
- * @return
- *   Return results in object format.
- */
-function jdt_user_notes_load($note_id) {
-  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
-}
-
-/**
  * Function to delete a note.
  *
  * @param $note_id
