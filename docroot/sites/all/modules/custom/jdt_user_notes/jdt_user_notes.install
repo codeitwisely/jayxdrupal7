@@ -36,7 +36,6 @@ function jdt_user_notes_schema() {
         'type' => 'text',
         'size' => 'big',
         'not null' => TRUE,
-        'default' => '',
       ),
     ),
     'primary key' => array('note_id'),
