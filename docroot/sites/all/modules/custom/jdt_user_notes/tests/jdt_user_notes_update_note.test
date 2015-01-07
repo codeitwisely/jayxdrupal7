@@ -39,13 +39,13 @@ class JdtUserNotesUpdateNoteTestCase extends DrupalWebTestCase {
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    _jdt_user_notes_create_note($entry);
+    $note_id = _jdt_user_notes_create_note($entry);
     $entry_updated = array(
-      'note_id' => 1,
       'article_nid' => 63,
       'author_uid' => 1,
       'note_text' => 'Here the modified note',
     );
+    $entry_updated['note_id'] = $note_id;
     $update = _jdt_user_notes_updt_note($entry_updated);
     $this->assertTrue($update, $update ? t('Entry updated.') : t('Impossible to update entry'), 'jdt_notes_user CRUD');
   }
