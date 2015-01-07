@@ -6,6 +6,12 @@
 
 class JdtUserNotesReadNoteTestCase extends DrupalWebTestCase {
 
+  /**
+   * This function return the informations for this testCase.
+   *
+   * @return
+   *   An array of informations about the test purpose.
+   */
   public static function getInfo() {
     return array(
       'name' => 'Test of selecting a note function',
@@ -14,6 +20,9 @@ class JdtUserNotesReadNoteTestCase extends DrupalWebTestCase {
     );
   }
 
+  /**
+   * Enable any modules required for the test.
+   */
   public function setUp() {
     // Enable any modules required for the test this should be an array of,
     // module names.
@@ -22,7 +31,7 @@ class JdtUserNotesReadNoteTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test funtion to read a note note.
+   * Test funtion to read a note.
    */
   public function testJdtUserNotesRead() {
     $entry = array(
