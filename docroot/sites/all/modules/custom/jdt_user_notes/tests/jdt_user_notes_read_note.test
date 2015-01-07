@@ -39,8 +39,7 @@ class JdtUserNotesReadNoteTestCase extends DrupalWebTestCase {
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    _jdt_user_notes_create_note($entry);
-    $note_id = 1;
+    $note_id = _jdt_user_notes_create_note($entry);
     $select = _jdt_user_notes_select_note($note_id);
     $this->assertTrue($select, $select ? t('Entry selected.') : t('Impossible to select entry'), 'jdt_notes_user CRUD');
   }

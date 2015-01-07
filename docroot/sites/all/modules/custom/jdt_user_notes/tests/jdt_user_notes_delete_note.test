@@ -39,8 +39,7 @@ class JdtUserNotesDeleteNoteTestCase extends DrupalWebTestCase {
       'author_uid' => 1,
       'note_text' => 'Here is the first test',
     );
-    _jdt_user_notes_create_note($entry);
-    $note_id = 1;
+    $note_id = _jdt_user_notes_create_note($entry);
     $delete = _jdt_user_notes_del_note($note_id);
     $this->assertTrue($delete, $delete ? t('Entry deleted.') : t('Impossible to delete entry'), 'jdt_notes_user CRUD');
   }
