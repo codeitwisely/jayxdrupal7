@@ -41,7 +41,7 @@ function jdt_user_notes_permission() {
  * Implements hook_menu().
  */
 function jdt_user_notes_menu() {
-  $items['jdt-user-notes/%jdt_user_notes/view'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/view'] = array(
     'title' => 'View',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_note_view', 1),
@@ -52,21 +52,24 @@ function jdt_user_notes_menu() {
     'title' => 'Add new note to an article',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_add_form', 1),
-    'access arguments' => array('add user notes'),
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_add_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['jdt-user-notes/%jdt_user_notes/edit'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_edit_form', 1),
-    'access arguments' => array('edit own user notes'),
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_edit_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['jdt-user-notes/%jdt_user_notes/delete'] = array(
+  $items['jdt-user-notes/%_jdt_user_notes_custom/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_delete_form', 1),
-    'access arguments' => array('delete own user notes'),
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_delete_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['node/%node/notes'] = array(
@@ -82,15 +85,67 @@ function jdt_user_notes_menu() {
 }
 
 /**
- * Loader for getting notes in object format for a given not_id.
+ * Function to manage add access permission to notes.
+ *
+ * @param $node
+ *   The node object that we load on the page.
+ * @return
+ *   True or false.
+ */
+function _jdt_user_notes_add_callback_function($node) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($node->uid == $user_id && user_access('add user notes')) || ($user->uid == 1)) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Function to manage edit access permission to notes.
+ *
+ * @param $note
+ *   The note object that we load on the page.
+ * @return
+ *   True or false.
+ */
+function _jdt_user_notes_edit_callback_function($note) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($note->author_uid == $user_id && user_access('edit own user notes')) || ($user->uid == 1) || user_access('edit any user notes')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Function to manage delete access permission to notes.
+ *
+ * @param $note
+ *   The note object that we load on the page.
+ * @return
+ *   True or false.
+ */
+function _jdt_user_notes_delete_callback_function($note) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($note->author_uid == $user_id && user_access('delete own user notes')) || ($user->uid == 1) || user_access('delete any user notes')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Loader for getting notes in object format for a given note_id.
  *
  * @param $note_id
  *   The note_id to load.
  * @return
- *   Return results in object format.
+ *   Return result in object format.
  */
-function jdt_user_notes_load($note_id) {
-  return db_query('SELECT note_id, article_nid, author_uid, note_text FROM {jdt_user_notes} WHERE note_id = :note_id', array(':note_id' => $note_id))->fetchObject();
+function _jdt_user_notes_custom_load($note_id) {
+  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+  $select = _jdt_user_notes_select_note($note_id);
+  if ($select == 1) {
+    return $select;
+  }
 }
 
 /**
@@ -169,11 +224,11 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
  * @param $note
  *   The note object.
  * @return
- *   The note_text field for the note_id passed in the url.
+ *   The form with note_text field for the note_id passed in the url.
  */
 function _jdt_user_notes_note_view($form, &$form_state, $note) {
   $note_id = $note->note_id;
-  $select = jdt_user_notes_load($note_id);
+  $select = _jdt_user_notes_select_note($note_id);
   $form['note_text'] = array(
     '#type' => 'textarea',
     '#title' => t('Note'),
@@ -336,13 +391,13 @@ function _jdt_user_notes_get_current_user_id() {
 function jdt_user_notes_theme() {
   return array(
   // Placeholders to hold initial values.
-    'jdt-user-notes' => array(
+    'jdt_user_notes' => array(
       'variables' => array(
         'note_text' => FALSE,
         'node_title' => FALSE,
         'node_author' => FALSE,
       ),
-      'template' => 'theme/jdt-user-notes-theming',
+      'template' => 'theme/jdt-user-notes',
     ),
   );
 }
@@ -359,9 +414,9 @@ function _jdt_user_notes_display_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   $note_text = _jdt_user_notes_article_notes($node->nid);
   $node_title = $node->title;
-  $node_author = _jdt_user_notes_get_article_author($node->nid);
+  $node_author = $node->name;
   return array(
-    '#theme' => 'jdt-user-notes',
+    '#theme' => 'jdt_user_notes',
     '#note_text' => $note_text,
     '#node_title' => $node_title,
     '#node_author' => $node_author,
@@ -379,7 +434,20 @@ function _jdt_user_notes_display_notes($node) {
 function _jdt_user_notes_get_note($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   $articles = _jdt_user_notes_article_notes($node->nid);
-  if($articles != ''){
+  if ($articles != '') {
     return TRUE;
   }
+  return FALSE;
+}
+
+/**
+ * Implements template_preprocess_THEMEHOOK().
+ */
+function template_preprocess_jdt_user_notes(&$variables) {
+  $variables['jdt_user_notes'] = array(
+    'note_text' => FALSE,
+    'node_title' => FALSE,
+    'node_author' => FALSE,
+  );
+  return $variables;
 }

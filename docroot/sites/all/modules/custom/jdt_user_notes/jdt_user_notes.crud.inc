@@ -6,6 +6,23 @@
  */
 
 /**
+ * Function to select a note for a given note_id.
+ *
+ * @param $note_id
+ *   The note_id to load.
+ * @return
+ *   Return result in object format.
+ */
+function _jdt_user_notes_select_note($note_id) {
+  $query = db_select('jdt_user_notes', 'jun');
+  $query->fields('jun')
+    ->condition('jun.note_id', $note_id, "=");
+  $result = $query->execute()->fetchObject();
+
+  return $result;
+}
+
+/**
  * Function to delete a note.
  *
  * @param $note_id
@@ -74,7 +91,6 @@ function _jdt_user_notes_create_note($entry = array()) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-
   return FALSE;
 }
 
@@ -96,25 +112,5 @@ function _jdt_user_notes_article_notes($nid) {
   while($record = $result->fetchAssoc()) {
     return $record['note_text'];
     }
-  return '';
-}
-
-/**
- * Grab author name for an article.
- *
- * @param $nid
- *   The article_id.
- * @return
- *   The author name or an empty string.
- */
-function _jdt_user_notes_get_article_author($nid) {
-  $query = db_select('node', 'n');
-  $query->join('users', 'u', 'n.uid = u.uid');
-  $query->fields('u', array('name'))
-    ->condition('n.nid', $nid, "=");
-  $result = $query->execute()->fetchAssoc();
-  if(isset($result['name'])) {
-    return $result['name'];
-  }
   return '';
 }

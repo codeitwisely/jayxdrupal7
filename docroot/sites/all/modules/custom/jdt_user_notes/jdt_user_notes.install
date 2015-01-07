@@ -36,15 +36,13 @@ function jdt_user_notes_schema() {
         'type' => 'text',
         'size' => 'big',
         'not null' => TRUE,
-        'default' => '',
       ),
     ),
     'primary key' => array('note_id'),
     'indexes' => array(
       'note_id' => array('note_id'),
       'article_nid' => array('article_nid'),
-      'author_uid' => array('author_uid'),
-      'note_text' => array('note_text'),
+      'author_uid' => array('author_uid')
     ),
   );
   return $schema;
