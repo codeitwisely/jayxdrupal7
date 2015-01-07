@@ -47,6 +47,7 @@ class JdtUserNotesUpdateNoteTestCase extends DrupalWebTestCase {
     );
     $entry_updated['note_id'] = $note_id;
     $update = _jdt_user_notes_updt_note($entry_updated);
-    $this->assertTrue($update, $update ? t('Entry updated.') : t('Impossible to update entry'), 'jdt_notes_user CRUD');
+    $is_updated = ($entry['note_text'] != $entry_updated['note_text']);
+    $this->assertTrue($is_updated, $is_updated ? t('Entry updated.') : t('Impossible to update entry'), 'jdt_notes_user CRUD');
   }
 }
