@@ -5,8 +5,6 @@
  */
 
 class JdtUserNotesTestCase extends DrupalWebTestCase {
-  // The user to who we'll give privileges for the tests.
-  protected $privilegedUser;
 
   public static function getInfo() {
     return array(
@@ -20,18 +18,7 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
     // Enable any modules required for the test this should be an array of,
     // module names.
     parent::setUp(array('jdt_user_notes'));
-    // Create and log in our privilegedUser.
-    $this->privilegedUser = $this->drupalCreateUser(
-      array(
-        'view user notes',
-        'add user notes',
-        'edit own user notes',
-        'edit any user notes',
-        'delete own user notes',
-        'delete any user notes',
-      )
-    );
-    $this->drupalLogin($this->privilegedUser);
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   }
 
   /**
@@ -48,7 +35,6 @@ class JdtUserNotesTestCase extends DrupalWebTestCase {
       'author_uid' => 7,
       'note_text' => 'Here is the first test',
     );
-    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
 
     // Test of the insert function.
     $insert = _jdt_user_notes_create_note($entry);

@@ -108,9 +108,6 @@ function _jdt_user_notes_article_notes($nid) {
   $query->join('node', 'n', 'jun.article_nid = n.nid');
   $query->fields('jun')
     ->condition('n.nid', $nid, "=");
-  $result = $query->execute();
-  while($record = $result->fetchAssoc()) {
-    return $record['note_text'];
-    }
-  return '';
+  $result = $query->execute()->fetchAll();
+  return $result;
 }
