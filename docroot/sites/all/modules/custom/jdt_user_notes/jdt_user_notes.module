@@ -444,10 +444,8 @@ function _jdt_user_notes_get_note($node) {
  * Implements template_preprocess_THEMEHOOK().
  */
 function template_preprocess_jdt_user_notes(&$variables) {
-  $variables['jdt_user_notes'] = array(
-    'note_text' => FALSE,
-    'node_title' => FALSE,
-    'node_author' => FALSE,
-  );
-  return $variables;
+  $node = $variables['node'];
+  $variables['node title'] = $node->title;
+  $variables['node_author'] = $node->name;
+  $variables['note'] = _jdt_user_notes_article_notes($node->nid);
 }
