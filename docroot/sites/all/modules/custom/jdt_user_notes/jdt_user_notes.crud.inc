@@ -6,40 +6,28 @@
  */
 
 /**
- * Function to return a table entry for the jdt_user_notes table.
+ * Function to select a note for a given note_id.
  *
- * According to the note_id.
  * @param $note_id
- *   The note_id for which we want to see the db entry.
+ *   The note_id to load.
  * @return
- *   An array with the fields of the table entry according to the note_id.
+ *   Return result in object format.
  */
-function _jdt_user_notes_note_select($note_id) {
-  $query = db_select('jdt_user_notes', 'jun')
-    ->fields('jun')
-    ->condition('jun.note_id', $note_id, '=');
-  $result = $query->execute()->fetchAssoc();
+function _jdt_user_notes_select_note($note_id) {
+  try {
+    $query = db_select('jdt_user_notes', 'jun');
+    $query->fields('jun')
+      ->condition('jun.note_id', $note_id, "=");
+    $result = $query->execute()->fetchObject();
 
-  return $result;
-}
-
-/**
- * Function to load entries from the DB.
- *
- * @param $entry
- *   Array of fields to be selected on the jdt_user_notes table.
- * @return
- *   Return results in object format.
- */
-function _jdt_user_notes_entry_load($entry = array()) {
-  $select = db_select('jdt_user_notes', 'jun');
-  $select->fields('jun');
-  // Add each field and value as a condition to this query.
-  foreach ($entry as $field => $value) {
-    $select->condition($field, $value);
+    return $result;
+  }
+  catch (Exception $e) {
+    watchdog(t('Failed to select record in table. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
 
-  return $select->execute()->fetchAll();
+  return FALSE;
 }
 
 /**
@@ -111,6 +99,5 @@ function _jdt_user_notes_create_note($entry = array()) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-
   return FALSE;
 }
