@@ -6,12 +6,12 @@
  */
 
 /**
- * Loader for getting notes in object format for a given not_id.
+ * Function to select a note for a given note_id.
  *
  * @param $note_id
  *   The note_id to load.
  * @return
- *   Return results in object format.
+ *   Return result in object format.
  */
 function _jdt_user_notes_select_note($note_id) {
   $query = db_select('jdt_user_notes', 'jun');

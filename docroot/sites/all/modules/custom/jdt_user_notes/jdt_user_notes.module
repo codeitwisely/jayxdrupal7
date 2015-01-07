@@ -46,7 +46,6 @@ function jdt_user_notes_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_note_view', 1),
     'access arguments' => array('view user notes'),
-    // 'access callback' => 'view user notes',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['jdt-user-notes/%node/add'] = array(
@@ -54,41 +53,74 @@ function jdt_user_notes_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_add_form', 1),
     'access arguments' => array(1),
-    'access callback' => '_jdt_user_notes_callback_function',
+    'access callback' => '_jdt_user_notes_add_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['jdt-user-notes/%_jdt_user_notes_custom/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_edit_form', 1),
-    'access arguments' => array('edit own user notes'),
-    // 'access callback' => 'edit own user notes',
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_edit_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['jdt-user-notes/%_jdt_user_notes_custom/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_delete_form', 1),
-    'access arguments' => array('delete own user notes'),
-    // 'access callback' => 'delete own user notes',
+    'access arguments' => array(1),
+    'access callback' => '_jdt_user_notes_delete_callback_function',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   return $items;
 }
 
 /**
- * Function to manage access permissions to notes
+ * Function to manage add access permission to notes.
+ *
+ * @param $node
+ *   The node object that we load on the page.
  * @return
- *   True o false.
+ *   True or false.
  */
-function _jdt_user_notes_callback_function($node) {
-  dpm($nid);
-  die();
-  // global $user;
-  // if ($node->uid == $user->uid && user_access('edit own user notes')) {
-  //   return TRUE;
-  // }
-  // return FALSE;
+function _jdt_user_notes_add_callback_function($node) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($node->uid == $user_id && user_access('add user notes')) || ($user->uid == 1)) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Function to manage edit access permission to notes.
+ *
+ * @param $note
+ *   The note object that we load on the page.
+ * @return
+ *   True or false.
+ */
+function _jdt_user_notes_edit_callback_function($note) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($note->author_uid == $user_id && user_access('edit own user notes')) || ($user->uid == 1) || user_access('edit any user notes')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Function to manage delete access permission to notes.
+ *
+ * @param $note
+ *   The note object that we load on the page.
+ * @return
+ *   True or false.
+ */
+function _jdt_user_notes_delete_callback_function($note) {
+  $user_id = _jdt_user_notes_get_current_user_id();
+  if (($note->author_uid == $user_id && user_access('delete own user notes')) || ($user->uid == 1) || user_access('delete any user notes')) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**
@@ -138,7 +170,7 @@ function _jdt_user_notes_add_form($form, &$form_state, $node) {
     '#rows' => 5,
     '#required' => TRUE,
   );
-  // now I add also a button.
+  // Now I add also a button.
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add user note'),
@@ -183,11 +215,11 @@ function _jdt_user_notes_add_form_submit_handler($form, &$form_state) {
  * @param $note
  *   The note object.
  * @return
- *   The note_text field for the note_id passed in the url.
+ *   The form with note_text field for the note_id passed in the url.
  */
 function _jdt_user_notes_note_view($form, &$form_state, $note) {
   $note_id = $note->note_id;
-  $select = jdt_user_notes_load($note_id);
+  $select = _jdt_user_notes_select_note($note_id);
   $form['note_text'] = array(
     '#type' => 'textarea',
     '#title' => t('Note'),
