@@ -1,0 +1,47 @@
+<?php
+/**
+ * @file
+ * Tests for CRUDS Functions used for the jdt_user_notes module.
+ */
+
+class JdtUserNotesDeleteNoteTestCase extends DrupalWebTestCase {
+
+  /**
+   * This function return the informations for this testCase.
+   *
+   * @return
+   *   An array of informations about the test purpose.
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Test of delete note function',
+      'description' => 'Ensure that the delete note function work',
+      'group' => 'Jdt user notes',
+    );
+  }
+
+  /**
+   * Enable any modules required for the test.
+   */
+  public function setUp() {
+    // Enable any modules required for the test this should be an array of,
+    // module names.
+    parent::setUp(array('jdt_user_notes'));
+    module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
+  }
+
+  /**
+   * Test function to delete a note.
+   */
+  public function testJdtUserNotesDelete() {
+    $entry = array(
+      'article_nid' => 20,
+      'author_uid' => 1,
+      'note_text' => 'Here is the first test',
+    );
+    _jdt_user_notes_create_note($entry);
+    $note_id = 1;
+    $delete = _jdt_user_notes_del_note($note_id);
+    $this->assertTrue($delete, $delete ? t('Entry deleted.') : t('Impossible to delete entry'), 'jdt_notes_user CRUD');
+  }
+}
