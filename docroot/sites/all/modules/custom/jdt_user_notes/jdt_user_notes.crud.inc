@@ -14,12 +14,20 @@
  *   Return result in object format.
  */
 function _jdt_user_notes_select_note($note_id) {
-  $query = db_select('jdt_user_notes', 'jun');
-  $query->fields('jun')
-    ->condition('jun.note_id', $note_id, "=");
-  $result = $query->execute()->fetchObject();
+  try {
+    $query = db_select('jdt_user_notes', 'jun');
+    $query->fields('jun')
+      ->condition('jun.note_id', $note_id, "=");
+    $result = $query->execute()->fetchObject();
 
-  return $result;
+    return $result;
+  }
+  catch (Exception $e) {
+    watchdog(t('Failed to select record in table. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+
+  return FALSE;
 }
 
 /**
