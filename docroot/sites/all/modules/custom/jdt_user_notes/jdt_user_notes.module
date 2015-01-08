@@ -87,11 +87,11 @@ function jdt_user_notes_menu() {
  *   True or false.
  */
 function _jdt_user_notes_access_callback($object_loaded, $permission, $super_permission) {
-  $user_id = _jdt_user_notes_get_current_user_id();
-  if ($user_id == 1 || user_access($super_permission)) {
+  if (user_access($super_permission)) {
     return TRUE;
   }
 
+  $user_id = _jdt_user_notes_get_current_user_id();
   // Object is a note.
   if (isset($object_loaded->author_uid)) {
     if ($object_loaded->author_uid == $user_id && user_access($permission)) {
