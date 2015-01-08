@@ -93,16 +93,18 @@ function _jdt_user_notes_access_callback($object_loaded, $permission, $super_per
     return TRUE;
   }
 
+  // Object is a note.
   if (isset($object_loaded->author_uid)) {
     if ($object_loaded->author_uid == $user_id && user_access($permission)) {
       return TRUE;
     }
   }
-  else {
-    if ($object_loaded->uid == $user_id && user_access($permission)) {
-      return TRUE;
-    }
+
+  // Object is a node.
+  if ($object_loaded->uid == $user_id && user_access($permission)) {
+    return TRUE;
   }
+
   return FALSE;
 }
 
