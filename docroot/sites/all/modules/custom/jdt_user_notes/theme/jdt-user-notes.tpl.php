@@ -16,6 +16,9 @@
     <p>Author : <span><?php print $node_author; ?></span></p>
   </div>
   <?php endif; ?>
+  <div class="add">
+    <p><span><?php print $add; ?></span></p>
+  </div>
   <hr />
   <?php endforeach; ?>
 </div>

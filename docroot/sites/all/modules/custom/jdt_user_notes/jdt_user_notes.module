@@ -81,6 +81,17 @@ function jdt_user_notes_menu() {
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
+  $items['jdt-user-notes/%ctools_js'] = array(
+    'page callback' => 'jdt_user_notes_callback',
+    'page arguments' => array(1),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['modal/page'] = array(
+    'page callback' => 'jdt_user_notes_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -97,20 +108,21 @@ function jdt_user_notes_menu() {
  *   True or false.
  */
 function _jdt_user_notes_access_callback($object_loaded, $permission, $super_permission) {
-  $user_id = _jdt_user_notes_get_current_user_id();
-  if ($user_id == 1 || user_access($super_permission)) {
+  if (user_access($super_permission)) {
     return TRUE;
   }
+  $user_id = _jdt_user_notes_get_current_user_id();
 
-  if(isset($object_loaded->author_id)) {
+  // Object is a note.
+  if(isset($object_loaded->author_uid)) {
     if ($object_loaded->author_uid == $user_id && user_access($permission)) {
       return TRUE;
     }
   }
-  else {
-    if ($object_loaded->uid == $user_id && user_access($permission)) {
-      return TRUE;
-    }
+
+  // Object is a node.
+  if ($object_loaded->uid == $user_id && user_access($permission)) {
+    return TRUE;
   }
   return FALSE;
 }
@@ -125,8 +137,7 @@ function _jdt_user_notes_access_callback($object_loaded, $permission, $super_per
  */
 function _jdt_user_notes_note_load($note_id) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $select = _jdt_user_notes_select_note($note_id);
-  return $select;
+  return _jdt_user_notes_select_note($note_id);
 }
 
 /**
@@ -298,6 +309,7 @@ function jdt_user_notes_theme() {
         'notes' => FALSE,
         'node_title' => FALSE,
         'node_author' => FALSE,
+        'add' => FALSE,
       ),
       'template' => 'theme/jdt-user-notes',
     ),
@@ -315,11 +327,13 @@ function jdt_user_notes_theme() {
 function _jdt_user_notes_display_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   $notes = _jdt_user_notes_article_notes($node->nid);
+  $add = _jdt_user_notes_make_link($link_text = '');
   return array(
     '#theme' => 'jdt_user_notes',
     '#notes' => $notes,
     '#node_title' => $node->title,
     '#node_author' => $node->name,
+    '#add' => $add,
   );
 }
 
