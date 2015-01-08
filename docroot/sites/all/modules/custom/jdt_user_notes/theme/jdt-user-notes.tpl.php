@@ -1,8 +1,9 @@
 <!-- Tab template -->
 <div class="note-container">
-  <?php if ($note_text): ?>
+  <?php foreach($notes as $note): ?>
+  <?php if ($note->note_text): ?>
   <div class="note-text">
-    <p>Note text : <span><?php print $note_text; ?></span></p>
+    <p>Note text : <span><?php print $note->note_text; ?></span></p>
   </div>
   <?php endif; ?>
   <?php if ($node_title): ?>
@@ -15,5 +16,7 @@
     <p>Author : <span><?php print $node_author; ?></span></p>
   </div>
   <?php endif; ?>
+  <hr />
+  <?php endforeach; ?>
 </div>
 <!-- /Tab template -->
