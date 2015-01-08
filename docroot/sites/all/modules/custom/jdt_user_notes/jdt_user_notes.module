@@ -194,49 +194,19 @@ function _jdt_user_notes_form_submit($form, &$form_state) {
 }
 
 /**
- * It's the view form which return the note_text field for a note.
+ * We display the note_text field for a given note object passed in parameter.
  *
- * @param $form
- *   The view form.
- * @param $form_state
- *   The form elemenets available.
  * @param $note
  *   The note object.
  * @return
- *   The form with note_text field for the note_id passed in the url.
- */
-function _jdt_user_notes_note_view_bak($form, &$form_state, $note) {
-  $note_id = $note->note_id;
-  $select = _jdt_user_notes_select_note($note_id);
-  $form['note_text'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Note'),
-    '#disabled' => TRUE,
-    '#default_value' => $select->note_text,
-  );
-  return $form;
-}
-
-/**
- * It's the view form which return the note_text field for a note.
- *
- * @param $form
- *   The view form.
- * @param $form_state
- *   The form elemenets available.
- * @param $note
- *   The note object.
- * @return
- *   The form with note_text field for the note_id passed in the url.
+ *   The note_text field for the note_id passed in the url.
  */
 function _jdt_user_notes_note_view($note) {
-  $note_id = $note->note_id;
-  $select = _jdt_user_notes_select_note($note_id);
-  dpm($select);
+  $select = _jdt_user_notes_select_note($note->note_id);
   $header = array(t('Note text'));
-  $output = theme('table', array('header' => $header, 'rows' => $select->note_text));
-  $output .= $select->note_text;
-  $output .= l(t('Edit Note'), 'jdt-user-notes/' . $note_id . '/edit');
+  $row[] = array($select->note_text);
+  $output = theme('table', array('header' => $header, 'rows' => $row));
+  $output .= l(t('Edit Note'), 'jdt-user-notes/' . $note->note_id . '/edit');
 
   return $output;
 }
@@ -300,6 +270,5 @@ function _jdt_user_notes_delete_form_submit($form, &$form_state) {
 function _jdt_user_notes_get_current_user_id() {
   global $user;
   $user_id = $user->uid;
-
   return $user_id;
 }
