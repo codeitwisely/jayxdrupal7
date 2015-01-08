@@ -76,7 +76,7 @@ function jdt_user_notes_menu() {
     'description' => 'Display notes related to an article',
     'page callback' => '_jdt_user_notes_display_notes',
     'page arguments' => array(1),
-    'access callback' => '_jdt_user_notes_get_note',
+    'access callback' => '_jdt_user_notes_get_notes',
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
@@ -295,6 +295,8 @@ function jdt_user_notes_theme() {
         'notes' => FALSE,
         'node_title' => FALSE,
         'node_author' => FALSE,
+        'node' => FALSE,
+        'add' => FALSE,
       ),
       'template' => 'theme/jdt-user-notes',
     ),
@@ -307,16 +309,12 @@ function jdt_user_notes_theme() {
  * @param $node
  * The node object for which we want to display notes.
  * @return
- * An array with values for note_author note_text and node_title.
+ * An array with the node object passed.
  */
 function _jdt_user_notes_display_notes($node) {
-  module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $notes = _jdt_user_notes_article_notes($node->nid);
   return array(
     '#theme' => 'jdt_user_notes',
-    '#notes' => $notes,
-    '#node_title' => $node->title,
-    '#node_author' => $node->name,
+    '#node' => $node,
   );
 }
 
@@ -328,7 +326,7 @@ function _jdt_user_notes_display_notes($node) {
  * @return
  * Return true if there is notes for an article or false.
  */
-function _jdt_user_notes_get_note($node) {
+function _jdt_user_notes_get_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   return _jdt_user_notes_article_notes($node->nid);
 }
@@ -336,9 +334,9 @@ function _jdt_user_notes_get_note($node) {
 /**
  * Implements template_preprocess_THEMEHOOK().
  */
-// function template_preprocess_jdt_user_notes(&$variables) {
-// $node = $variables['node'];
-// $variables['node_title'] = $node->title;
-// $variables['node_author'] = $node->name;
-// $variables['note'] = _jdt_user_notes_article_notes($node->nid);
-// }
+function template_preprocess_jdt_user_notes(&$variables) {
+  $node = $variables['node'];
+  $variables['node_title'] = $node->title;
+  $variables['node_author'] = $node->name;
+  $variables['notes'] = _jdt_user_notes_article_notes($node->nid);
+}
