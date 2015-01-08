@@ -25,7 +25,6 @@
   </div>
 
   <hr />
-
   <?php endforeach; ?>
 </div>
 <!-- /Tab template -->

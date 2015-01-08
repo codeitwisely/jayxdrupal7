@@ -351,6 +351,7 @@ function template_preprocess_jdt_user_notes(&$variables) {
   $variables['node_title'] = $node->title;
   $variables['node_author'] = $node->name;
   $variables['notes'] = _jdt_user_notes_article_notes($node->nid);
+  $variables['add'] = _jdt_user_notes_make_link($link_text = '');
 }
 
 /**
