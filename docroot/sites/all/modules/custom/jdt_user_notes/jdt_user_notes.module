@@ -116,8 +116,7 @@ function _jdt_user_notes_access_callback($object_loaded, $permission, $super_per
  */
 function _jdt_user_notes_note_load($note_id) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $select = _jdt_user_notes_select_note($note_id);
-  return $select;
+  return _jdt_user_notes_select_note($note_id);
 }
 
 /**
