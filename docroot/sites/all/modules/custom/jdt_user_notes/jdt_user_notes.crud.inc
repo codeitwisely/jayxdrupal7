@@ -6,6 +6,31 @@
  */
 
 /**
+ * Function to select a note for a given note_id.
+ *
+ * @param $note_id
+ *   The note_id to load.
+ * @return
+ *   Return result in object format.
+ */
+function _jdt_user_notes_select_note($note_id) {
+  try {
+    $query = db_select('jdt_user_notes', 'jun');
+    $query->fields('jun')
+      ->condition('jun.note_id', $note_id, "=");
+    $result = $query->execute()->fetchObject();
+
+    return $result;
+  }
+  catch (Exception $e) {
+    watchdog(t('Failed to select record in table. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+
+  return FALSE;
+}
+
+/**
  * Function to delete a note.
  *
  * @param $note_id
@@ -74,7 +99,6 @@ function _jdt_user_notes_create_note($entry = array()) {
     watchdog(t('db_insert failed. Message = %message, query= %query',
     array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
   }
-
   return FALSE;
 }
 
@@ -84,37 +108,22 @@ function _jdt_user_notes_create_note($entry = array()) {
  * @param $nid
  *   The article_id.
  * @return
- *   The note_text or an empty string.
+ *   The notes for the articles as objects or false.
  */
 function _jdt_user_notes_article_notes($nid) {
-  // Grab values from the database.
-  $query = db_select('jdt_user_notes', 'jun');
-  $query->join('node', 'n', 'jun.article_nid = n.nid');
-  $query->fields('jun')
-    ->condition('n.nid', $nid, "=");
-  $result = $query->execute();
-  while($record = $result->fetchAssoc()) {
-    return $record['note_text'];
-    }
-  return '';
-}
+  try {
+    // Grab values from the database.
+    $query = db_select('jdt_user_notes', 'jun');
+    $query->join('node', 'n', 'jun.article_nid = n.nid');
+    $query->fields('jun')
+      ->condition('n.nid', $nid, "=");
+    $result = $query->execute()->fetchAll();
 
-/**
- * Grab author name for an article.
- *
- * @param $nid
- *   The article_id.
- * @return
- *   The author name or an empty string.
- */
-function _jdt_user_notes_get_article_author($nid) {
-  $query = db_select('node', 'n');
-  $query->join('users', 'u', 'n.uid = u.uid');
-  $query->fields('u', array('name'))
-    ->condition('n.nid', $nid, "=");
-  $result = $query->execute()->fetchAssoc();
-  if(isset($result['name'])) {
-    return $result['name'];
+    return $result;
   }
-  return '';
+  catch (Exception $e) {
+    watchdog(t('no notes selected. Message = %message, query= %query',
+    array('%message' => $e->getMessage(), '%query' => $e->query_string)), 'error');
+  }
+  return FALSE;
 }
