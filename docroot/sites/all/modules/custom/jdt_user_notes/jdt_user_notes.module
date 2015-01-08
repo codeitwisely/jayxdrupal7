@@ -93,7 +93,7 @@ function _jdt_user_notes_access_callback($object_loaded, $permission, $super_per
     return TRUE;
   }
 
-  if(isset($object_loaded->author_id)) {
+  if (isset($object_loaded->author_uid)) {
     if ($object_loaded->author_uid == $user_id && user_access($permission)) {
       return TRUE;
     }
