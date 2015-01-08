@@ -307,9 +307,9 @@ function jdt_user_notes_theme() {
  * Function to display notes for an article.
  *
  * @param $node
- * The node object for which we want to display notes.
+ *   The node object for which we want to display notes.
  * @return
- * An array with the node object passed.
+ *   An array with the node object passed.
  */
 function _jdt_user_notes_display_notes($node) {
   return array(
@@ -322,9 +322,9 @@ function _jdt_user_notes_display_notes($node) {
  * We Create a tab for notes only if notes exist for a given article.
  *
  * @param $node
- * The node object that we want to get.
+ *   The node object that we want to get.
  * @return
- * Return true if there is notes for an article or false.
+ *   Return true if there is notes for an article or false.
  */
 function _jdt_user_notes_get_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
