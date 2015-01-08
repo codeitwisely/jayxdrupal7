@@ -52,8 +52,7 @@ function jdt_user_notes_menu() {
     'title' => 'Add new note to an article',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_form', 1),
-    'access arguments' => array(1, 'add user notes'),
-    'access callback' => '_jdt_user_notes_access_callback',
+    'access arguments' => array('add user notes'),
     'type' => MENU_CALLBACK,
   );
   $items['jdt-user-notes/%_jdt_user_notes_note/edit'] = array(
