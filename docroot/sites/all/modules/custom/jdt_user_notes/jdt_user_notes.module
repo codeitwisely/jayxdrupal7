@@ -232,7 +232,7 @@ function _jdt_user_notes_note_view($note) {
 function _jdt_user_notes_delete_form($form, &$form_state, $note) {
   $form['#item'] = $note;
   $form['header'] = array(
-    '#markup' => t('Are you sure you wish to delete the note with the note_id %value ?', array('%value' => $note->note_id)),
+    '#markup' => t('Are you sure you wish to delete the note with the note_id %value?', array('%value' => $note->note_id)),
     '#prefix' => '<h2>',
     '#suffix' => '</h2>',
   );

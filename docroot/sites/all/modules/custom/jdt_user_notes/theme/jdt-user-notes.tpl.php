@@ -5,7 +5,7 @@
  * Default theme implementation to display all notes for an article.
  *
  * Available variables:
- * - $notes: the note object for which we want to get the note_text field.
+ * - $notes: the note objects for which we want to get the note_text field.
  * - $node_tile: The node title.
  * - $node_author: The node author.
  *
