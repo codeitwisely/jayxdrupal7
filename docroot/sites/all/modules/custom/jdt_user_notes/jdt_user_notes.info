@@ -9,3 +9,4 @@ files[] = tests/jdt_user_notes_update_note.test
 files[] = tests/jdt_user_notes_delete_note.test
 files[] = jdt_user_notes.crud.inc
 dependencies[] = ctools
+

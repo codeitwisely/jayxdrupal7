@@ -76,7 +76,7 @@ function jdt_user_notes_menu() {
     'description' => 'Display notes related to an article',
     'page callback' => '_jdt_user_notes_display_notes',
     'page arguments' => array(1),
-    'access callback' => '_jdt_user_notes_get_note',
+    'access callback' => '_jdt_user_notes_get_notes',
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
@@ -163,7 +163,7 @@ function _jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
     '#rows' => 5,
     '#required' => TRUE,
   );
-  dpm($object_loaded);
+
   if (isset($object_loaded->nid)) {
     $form['article_nid']['#value'] = $object_loaded->nid;
     $form['author_uid']['#value'] = _jdt_user_notes_get_current_user_id();
@@ -244,7 +244,7 @@ function _jdt_user_notes_note_view($note) {
 function _jdt_user_notes_delete_form($form, &$form_state, $note) {
   $form['#item'] = $note;
   $form['header'] = array(
-    '#markup' => t('Are you sure you wish to delete the note with the note_id <em>@value</em>?', array('@value' => $note->note_id)),
+    '#markup' => t('Are you sure you wish to delete the note with the note_id %value ?', array('%value' => $note->note_id)),
     '#prefix' => '<h2>',
     '#suffix' => '</h2>',
   );
@@ -321,7 +321,7 @@ function jdt_user_notes_theme() {
  * @param $node
  * The node object for which we want to display notes.
  * @return
- * An array with values for note_author note_text and node_title.
+ *   An array with the node object passed.
  */
 function _jdt_user_notes_display_notes($node) {
   return array(
@@ -336,9 +336,9 @@ function _jdt_user_notes_display_notes($node) {
  * @param $node
  * The node object that we want to get.
  * @return
- * Return true if there is notes for an article or false.
+ *   Return true if there is notes for an article or false.
  */
-function _jdt_user_notes_get_note($node) {
+function _jdt_user_notes_get_notes($node) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
   return _jdt_user_notes_article_notes($node->nid);
 }
@@ -394,7 +394,7 @@ function jdt_user_notes_callback($ajax) {
     );
     // Use ctools to generate ajax instructions for the browser to create
     // a form in a modal popup.
-    $output = ctools_modal_form_wrapper('_jdt_user_notes_note_form', $form_state);
+    $output = ctools_modal_form_wrapper('_jdt_user_notes_note_form', $form_state, $object_loaded);
     // If the form has been submitted, there may be additional instructions
     // such as dismissing the modal popup.
     if (!empty($form_state['ajax_commands'])) {
@@ -435,4 +435,5 @@ function jdt_user_notes_form_submit(&$form, &$form_state) {
   $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
   // Tell the browser to replace the old link with the new one.
   $form_state['ajax_commands'][] = ajax_command_replace('#magical-modal-link', $link);
+
 }
