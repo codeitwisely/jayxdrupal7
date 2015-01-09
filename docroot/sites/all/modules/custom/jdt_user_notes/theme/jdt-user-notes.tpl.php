@@ -22,20 +22,22 @@
       <div class="note-text">
         <p><?php print t('Note text'); ?> : <span><?php print $note->note_text; ?></span></p>
       </div>
-      <?php endif; ?>
+    <?php endif; ?>
 
-      <?php if ($node_title): ?>
+    <?php if ($node_title): ?>
       <div class="node-title">
         <p><?php print t('Title'); ?> : <span><?php print $node_title; ?></span></p>
       </div>
-      <?php endif; ?>
+    <?php endif; ?>
 
-      <?php if ($node_author): ?>
+    <?php if ($node_author): ?>
       <div class="node-author">
         <p><?php print t('Author'); ?> : <span><?php print $node_author; ?></span></p>
       </div>
-      <?php endif; ?>
-
-      <hr />
+    <?php endif; ?>
+    <div class="add-link">
+      <span><?php print $add; ?></span>
+    </div>
+    <hr />
   <?php endforeach; ?>
 </div>

@@ -163,7 +163,7 @@ function _jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
     '#rows' => 5,
     '#required' => TRUE,
   );
-
+  dpm($form);
   if (isset($object_loaded->nid)) {
     $form['article_nid']['#value'] = $object_loaded->nid;
     $form['author_uid']['#value'] = _jdt_user_notes_get_current_user_id();
@@ -308,7 +308,7 @@ function jdt_user_notes_theme() {
         'node_title' => FALSE,
         'node_author' => FALSE,
         'node' => FALSE,
-        'add' => FALSE,
+        'edit' => FALSE,
       ),
       'template' => 'theme/jdt-user-notes',
     ),
@@ -351,7 +351,7 @@ function template_preprocess_jdt_user_notes(&$variables) {
   $variables['node_title'] = $node->title;
   $variables['node_author'] = $node->name;
   $variables['notes'] = _jdt_user_notes_article_notes($node->nid);
-  $variables['add'] = _jdt_user_notes_make_link($link_text = '');
+  $variables['edit'] = _jdt_user_notes_make_link($link_text = '');
 }
 
 /**
@@ -366,7 +366,7 @@ function _jdt_user_notes_make_link($link_text = '') {
   ctools_modal_add_js();
   // Set a default value if no text in supplied.
   if (empty($link_text)) {
-    $link_text = 'Add note';
+    $link_text = 'Edit note';
   }
   return ' ' . l($link_text, 'jdt-user-notes/nojs', array('attributes' => array('class' => 'ctools-use-modal'))) . ' ';
 }
