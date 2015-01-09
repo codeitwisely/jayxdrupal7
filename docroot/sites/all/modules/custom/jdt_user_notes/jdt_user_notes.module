@@ -91,6 +91,14 @@ function jdt_user_notes_menu() {
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
+  $items['appnovation/add'] = array(
+    'title' => 'Add a remark',
+    'access callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_jdt_user_notes_appnovation_form'),
+    'file' => 'jdt_user_notes.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
   return $items;
 }
 
@@ -163,7 +171,6 @@ function _jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
     '#rows' => 5,
     '#required' => TRUE,
   );
-  dpm($object_loaded);
   if (isset($object_loaded->nid)) {
     $form['article_nid']['#value'] = $object_loaded->nid;
     $form['author_uid']['#value'] = _jdt_user_notes_get_current_user_id();
