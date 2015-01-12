@@ -2,6 +2,11 @@ name = Jdt User Notes
 description =Allow users to add their own notes to an article
 core = 7.x
 package = Appnovation modules
+version = "7.x-1.0"
+files[] = tests/jdt_user_notes_create_note.test
+files[] = tests/jdt_user_notes_read_note.test
+files[] = tests/jdt_user_notes_update_note.test
+files[] = tests/jdt_user_notes_delete_note.test
 files[] = jdt_user_notes.crud.inc
-files[] = jdt_user_notes.test
-files[] = jdt-user-notes-theming.tpl.php
+dependencies[] = ctools
+
