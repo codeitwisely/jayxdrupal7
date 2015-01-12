@@ -6,12 +6,12 @@
  */
 
 /**
- * Function to select a note for a given note_id.
+ * Select a note for a given note_id or all notes for a given node id .
  *
  * @param $note_id
  *   The note_id to load.
  * @return
- *   Return result in object format.
+ *   Result in object format.
  */
 function _jdt_user_notes_select_note($note_id) {
   try {
@@ -31,7 +31,7 @@ function _jdt_user_notes_select_note($note_id) {
 }
 
 /**
- * Function to delete a note.
+ * Delete a note.
  *
  * @param $note_id
  *   The note_id to delete.
@@ -55,12 +55,12 @@ function _jdt_user_notes_del_note($note_id) {
 }
 
 /**
- * Function to update a note.
+ * Update a note.
  *
  * @param $entry
  *   Array of fields to be updated on the DB.
  * @return
- *   Return the number of updated rows or false.
+ *   The number of updated rows or false.
  */
 function _jdt_user_notes_updt_note($entry = array()) {
   try {
@@ -80,12 +80,12 @@ function _jdt_user_notes_updt_note($entry = array()) {
 }
 
 /**
- * Function to add a note to an existing Article.
+ * Add a note to an existing Article.
  *
  * @param $entry
  *   Array of fields to insert on the DB.
  * @return
- *   Return the last id inserted on the table or false.
+ *   The last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
   try {
