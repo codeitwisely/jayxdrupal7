@@ -399,7 +399,7 @@ function jdt_user_notes_callback($ajax) {
     ctools_include('modal');
     $form_state = array(
       'ajax' => TRUE,
-      'title' => t('MyModule Modal Form'),
+      'title' => t('Add/Edit a note'),
     );
     // Use ctools to generate ajax instructions for the browser to create,
     // a form in a modal popup.
