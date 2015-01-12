@@ -8,6 +8,7 @@
  * - $notes: the note object for which we want to get the note_text field.
  * - $node_tile: The node title.
  * - $node_author: The node author.
+ * - $edit : The edit link for the note.
  *
  * @see template_preprocess_jdt_user_notes()
  *
@@ -35,7 +36,7 @@
         <p><?php print t('Author'); ?> : <span><?php print $node_author; ?></span></p>
       </div>
     <?php endif; ?>
-    <div class="add-link">
+    <div class="edit-link">
       <span><?php print $edit; ?></span>
     </div>
     <hr />
