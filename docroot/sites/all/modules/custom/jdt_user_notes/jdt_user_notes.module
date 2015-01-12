@@ -158,10 +158,11 @@ function jdt_user_notes_note_form($form, &$form_state, $node = NULL, $note = NUL
   // It's a note.
   else {
     $note = $node;
-    $form['note_id']['#value'] = $note->note_id;
-    $form['article_nid']['#value'] = $note->article_nid;
-    $form['author_uid']['#value'] = $note->author_uid;
-    $form['note_text']['#default_value'] = $note->note_text;
+    dpm($note);
+    $form['note_id']['#value'] = $note[0]->note_id;
+    $form['article_nid']['#value'] = $note[0]->article_nid;
+    $form['author_uid']['#value'] = $note[0]->author_uid;
+    $form['note_text']['#default_value'] = $note[0]->note_text;
   }
   // Now I add also a button.
   $form['submit'] = array(
@@ -211,11 +212,11 @@ function jdt_user_notes_note_form_submit($form, &$form_state) {
  *   The note_text field for the note passed in the url.
  */
 function jdt_user_notes_note_view($note) {
-  $select = _jdt_user_notes_select_note($note->note_id);
+  $select = _jdt_user_notes_select_note($note[0]->note_id);
   $header = array(t('Note text'));
-  $row[] = array($select->note_text);
+  $row[] = array($select[0]->note_text);
   $output = theme('table', array('header' => $header, 'rows' => $row));
-  $output .= l(t('Edit Note'), 'jdt-user-notes/' . $note->note_id . '/edit');
+  $output .= l(t('Edit Note'), 'jdt-user-notes/' . $note[0]->note_id . '/edit');
 
   return $output;
 }

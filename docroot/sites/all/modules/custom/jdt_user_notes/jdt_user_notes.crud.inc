@@ -13,13 +13,18 @@
  * @return
  *   Result in object format.
  */
-function _jdt_user_notes_select_note($note_id) {
+function _jdt_user_notes_select_note($note_id, $nid = NULL) {
   try {
     $query = db_select('jdt_user_notes', 'jun');
-    $query->fields('jun')
-      ->condition('jun.note_id', $note_id, "=");
-    $result = $query->execute()->fetchObject();
-
+    $query->fields('jun');
+    if ($nid != NULL) {
+      $query->join('node','n', 'jun.article_nid = n.nid');
+      $query->condition('n.nid', $nid, "=");
+    }
+    else {
+      $query->condition('jun.note_id', $note_id, "=");
+    }
+    $result = $query->execute()->fetchAll();
     return $result;
   }
   catch (Exception $e) {
