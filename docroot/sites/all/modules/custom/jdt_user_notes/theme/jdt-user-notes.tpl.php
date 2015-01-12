@@ -36,7 +36,7 @@
       </div>
     <?php endif; ?>
     <div class="add-link">
-      <span><?php print $add; ?></span>
+      <span><?php print $edit; ?></span>
     </div>
     <hr />
   <?php endforeach; ?>
