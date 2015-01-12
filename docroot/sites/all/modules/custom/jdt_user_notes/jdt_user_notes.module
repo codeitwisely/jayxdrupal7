@@ -53,6 +53,7 @@ function jdt_user_notes_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_jdt_user_notes_note_form', 1),
     'access arguments' => array('add user notes'),
+    'modal' => TRUE,
     'type' => MENU_CALLBACK,
   );
   $items['jdt-user-notes/%_jdt_user_notes_note/edit'] = array(
@@ -61,6 +62,7 @@ function jdt_user_notes_menu() {
     'page arguments' => array('_jdt_user_notes_note_form', 1),
     'access arguments' => array(1, 'edit own user notes', 'edit any user notes'),
     'access callback' => '_jdt_user_notes_access_callback',
+    'modal' => TRUE,
     'type' => MENU_CALLBACK,
   );
   $items['jdt-user-notes/%_jdt_user_notes_note/delete'] = array(
@@ -350,7 +352,6 @@ function template_preprocess_jdt_user_notes(&$variables) {
   $variables['node_title'] = $node->title;
   $variables['node_author'] = $node->name;
   $variables['notes'] = _jdt_user_notes_article_notes($node->nid);
-  $variables['edit'] = _jdt_user_notes_make_link($link_text = '');
 }
 
 /**
