@@ -131,12 +131,14 @@ function jdt_user_notes_note_load($note_id) {
  *   The add note form.
  * @param $form_state
  *   The form elements available.
- * @param $object_loaded
- *   The object that we pass can be a note or a node.
+ * @param $node
+ *   The object pass can be a node.
+ * @param $note
+ *   The object passed can be a note.
  * @return
  *   The add/edit note form for an article which nid is passed on the url.
  */
-function jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
+function jdt_user_notes_note_form($form, &$form_state, $node = NULL, $note = NULL) {
   $form['article_nid']['#type'] = 'value';
   $form['author_uid']['#type'] = 'value';
   $form['note_id']['#type'] = 'value';
@@ -147,15 +149,19 @@ function jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
     '#rows' => 5,
     '#required' => TRUE,
   );
-  if (isset($object_loaded->nid)) {
-    $form['article_nid']['#value'] = $object_loaded->nid;
+
+  // It's a node.
+  if (isset($node->nid)) {
+    $form['article_nid']['#value'] = $node->nid;
     $form['author_uid']['#value'] = jdt_user_notes_get_current_user_id();
   }
+  // It's a note.
   else {
-    $form['note_id']['#value'] = $object_loaded->note_id;
-    $form['article_nid']['#value'] = $object_loaded->article_nid;
-    $form['author_uid']['#value'] = $object_loaded->author_uid;
-    $form['note_text']['#default_value'] = $object_loaded->note_text;
+    $note = $node;
+    $form['note_id']['#value'] = $note->note_id;
+    $form['article_nid']['#value'] = $note->article_nid;
+    $form['author_uid']['#value'] = $note->author_uid;
+    $form['note_text']['#default_value'] = $note->note_text;
   }
   // Now I add also a button.
   $form['submit'] = array(
@@ -175,11 +181,11 @@ function jdt_user_notes_note_form($form, &$form_state, $object_loaded) {
  */
 function jdt_user_notes_note_form_submit($form, &$form_state) {
   module_load_include('inc', 'jdt_user_notes', 'jdt_user_notes.crud');
-  $values =  $form_state['values'];
+  $values = $form_state['values'];
   $entry = array(
     'article_nid' => $values['article_nid'],
     'author_uid' => $values['author_uid'],
-    'note_text' => $values['note_text']
+    'note_text' => check_plain($values['note_text'])
   );
   if (!$values['note_id']) {
     $create = _jdt_user_notes_create_note($entry);
