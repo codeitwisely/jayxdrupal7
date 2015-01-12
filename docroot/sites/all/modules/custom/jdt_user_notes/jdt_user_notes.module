@@ -401,10 +401,10 @@ function jdt_user_notes_callback($ajax) {
       'ajax' => TRUE,
       'title' => t('MyModule Modal Form'),
     );
-    // Use ctools to generate ajax instructions for the browser to create
+    // Use ctools to generate ajax instructions for the browser to create,
     // a form in a modal popup.
     $output = ctools_modal_form_wrapper('_jdt_user_notes_note_form', $form_state, $object_loaded);
-    // If the form has been submitted, there may be additional instructions
+    // If the form has been submitted, there may be additional instructions,
     // such as dismissing the modal popup.
     if (!empty($form_state['ajax_commands'])) {
       $output = $form_state['ajax_commands'];
