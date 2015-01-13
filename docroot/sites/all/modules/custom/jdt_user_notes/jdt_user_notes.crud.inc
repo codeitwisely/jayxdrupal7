@@ -15,7 +15,7 @@
  * @param
  *   The user id if its given to the function parameter.
  * @return
- *   Result an array of objects or false.
+ *   Result as an array of objects or false.
  */
 function _jdt_user_notes_select_note($note_id, $nid = NULL, $uid = NULL) {
   try {
