@@ -10,16 +10,20 @@
  *
  * @param $note_id
  *   The note_id to load.
+ * @param
+ *   The note id if its given to the function parameter.
+ * @param
+ *   The user id if its given to the function parameter.
  * @return
- *   Result in object format.
+ *   Result as array of objects.
  */
-function _jdt_user_notes_select_note($note_id, $nid = NULL) {
+function _jdt_user_notes_select_note($note_id, $nid = NULL, $uid = NULL) {
   try {
     $query = db_select('jdt_user_notes', 'jun');
     $query->fields('jun');
-    if ($nid != NULL) {
-      $query->join('node','n', 'jun.article_nid = n.nid');
-      $query->condition('n.nid', $nid, "=");
+    if ($nid != NULL && $uid != NULL) {
+      $query->condition('jun.article_nid', $nid, "=");
+      $query->condition('jun.author_uid', $uid, "=");
     }
     else {
       $query->condition('jun.note_id', $note_id, "=");
