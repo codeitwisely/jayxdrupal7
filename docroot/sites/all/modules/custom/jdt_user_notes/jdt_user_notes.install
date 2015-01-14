@@ -42,7 +42,7 @@ function jdt_user_notes_schema() {
     'indexes' => array(
       'note_id' => array('note_id'),
       'article_nid' => array('article_nid'),
-      'author_uid' => array('author_uid')
+      'author_uid' => array('author_uid'),
     ),
   );
   return $schema;
