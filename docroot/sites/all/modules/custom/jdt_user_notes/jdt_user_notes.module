@@ -208,7 +208,7 @@ function jdt_user_notes_note_form_submit($form, &$form_state) {
     $destination_redirect = $entry['note_id'];
   }
   $form_state['redirect'] = 'jdt-user-notes/' . $destination_redirect . '/view';
-  drupal_set_message($message, 'status');
+  drupal_set_message(check_plain($message), 'status');
 }
 
 /**
