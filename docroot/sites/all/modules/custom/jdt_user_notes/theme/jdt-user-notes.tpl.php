@@ -15,27 +15,26 @@
  */
 ?>
 
-<div class="note-container">
-  <?php foreach($notes as $note): ?>
-
+<?php foreach($notes as $note): ?>
+  <div class="note-container">
     <?php if ($note->note_text): ?>
       <div class="note-text">
-        <p><?php print t('Note text'); ?> : <span><?php print $note->note_text; ?></span></p>
+        <?php print $note->note_text; ?>
       </div>
     <?php endif; ?>
 
     <?php if ($node_title): ?>
       <div class="node-title">
-        <p><?php print t('Title'); ?> : <span><?php print $node_title; ?></span></p>
+        <?php print $node_title; ?>
       </div>
     <?php endif; ?>
 
     <?php if ($node_author): ?>
       <div class="node-author">
-        <p><?php print t('Author'); ?> : <span><?php print $node_author; ?></span></p>
+        <?php print $node_author; ?>
       </div>
     <?php endif; ?>
 
     <hr />
-  <?php endforeach; ?>
-</div>
+  </div>
+<?php endforeach; ?>
