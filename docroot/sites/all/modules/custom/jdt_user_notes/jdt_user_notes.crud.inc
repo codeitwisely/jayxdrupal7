@@ -6,7 +6,7 @@
  */
 
 /**
- * Function to select a note for a given note_id.
+ * Loader for getting notes in object format for a given not_id.
  *
  * @param $note_id
  *   The note_id to load.
