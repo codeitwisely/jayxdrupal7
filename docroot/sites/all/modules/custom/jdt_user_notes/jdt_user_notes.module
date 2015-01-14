@@ -90,7 +90,7 @@ function jdt_user_notes_menu() {
 /**
  * Access callback.
  *
- * Manage access permission to notes.
+ * Manage access permissions to notes.
  *
  * @param object $object_loaded
  *   The object loaded on the page can be a note or a node.
