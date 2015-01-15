@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * jdt_user_notes.install
+ * jdt_user_notes.install.
  * This will implements fonctionnality to install the jdt_user_notes module.
  */
 
 /**
- * Implements jdt_user_notes_schema().
+ * Implements hook_schema().
  */
 function jdt_user_notes_schema() {
   $schema['jdt_user_notes'] = array(
@@ -33,10 +33,9 @@ function jdt_user_notes_schema() {
       ),
       'note_text' => array(
         'description' => 'Note of the author',
-        'type' => 'varchar',
-        'length' => 150,
+        'type' => 'text',
+        'size' => 'big',
         'not null' => TRUE,
-        'default' => '',
       ),
     ),
     'primary key' => array('note_id'),
@@ -44,10 +43,7 @@ function jdt_user_notes_schema() {
       'note_id' => array('note_id'),
       'article_nid' => array('article_nid'),
       'author_uid' => array('author_uid'),
-      'note_text' => array('note_text'),
     ),
   );
   return $schema;
 }
-
-

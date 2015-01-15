@@ -6,20 +6,32 @@
  */
 
 /**
- * Function to select a note for a given note_id.
+ * Select a note for a given note_id or all notes for a given node id.
  *
- * @param $note_id
+ * The note author_uid must be equal to the uid of the logged user.
+ *
+ * @param int $note_id
  *   The note_id to load.
- * @return
- *   Return result in object format.
+ * @param int $nid
+ *   The note id if its given to the function parameter.
+ * @param int $uid
+ *   The user id if its given to the function parameter.
+ *
+ * @return bool
+ *   Result as array of objects.
  */
-function _jdt_user_notes_select_note($note_id) {
+function _jdt_user_notes_select_note($note_id, $nid, $uid) {
   try {
     $query = db_select('jdt_user_notes', 'jun');
-    $query->fields('jun')
-      ->condition('jun.note_id', $note_id, "=");
-    $result = $query->execute()->fetchObject();
-
+    $query->fields('jun');
+    if ($nid != NULL && $uid != NULL) {
+      $query->condition('jun.article_nid', $nid, "=");
+      $query->condition('jun.author_uid', $uid, "=");
+    }
+    else {
+      $query->condition('jun.note_id', $note_id, "=");
+    }
+    $result = $query->execute()->fetchAll();
     return $result;
   }
   catch (Exception $e) {
@@ -31,11 +43,12 @@ function _jdt_user_notes_select_note($note_id) {
 }
 
 /**
- * Function to delete a note.
+ * Delete a note.
  *
- * @param $note_id
+ * @param int $note_id
  *   The note_id to delete.
- * @return
+ *
+ * @return bool
  *   Return the number of deleted rows or false.
  */
 function _jdt_user_notes_del_note($note_id) {
@@ -55,12 +68,13 @@ function _jdt_user_notes_del_note($note_id) {
 }
 
 /**
- * Function to update a note.
+ * Update a note.
  *
- * @param $entry
+ * @param array $entry
  *   Array of fields to be updated on the DB.
- * @return
- *   Return the number of updated rows or false.
+ *
+ * @return bool
+ *   The number of updated rows or false.
  */
 function _jdt_user_notes_updt_note($entry = array()) {
   try {
@@ -80,12 +94,13 @@ function _jdt_user_notes_updt_note($entry = array()) {
 }
 
 /**
- * Function to add a note to an existing Article.
+ * Add a note to an existing article.
  *
- * @param $entry
+ * @param array $entry
  *   Array of fields to insert on the DB.
- * @return
- *   Return the last id inserted on the table or false.
+ *
+ * @return bool
+ *   The last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
   try {

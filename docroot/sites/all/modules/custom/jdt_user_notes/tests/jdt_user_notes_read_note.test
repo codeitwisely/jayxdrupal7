@@ -9,7 +9,7 @@ class JdtUserNotesReadNoteTestCase extends DrupalWebTestCase {
   /**
    * This function return the informations for this testCase.
    *
-   * @return
+   * @return array
    *   An array of informations about the test purpose.
    */
   public static function getInfo() {
