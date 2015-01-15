@@ -9,7 +9,11 @@ class JdtUserNotesDeleteNoteTestCase extends DrupalWebTestCase {
   /**
    * This function return the informations for this testCase.
    *
+<<<<<<< HEAD
    * @return
+=======
+   * @return array
+>>>>>>> d4d859ea6357ab6abdaaf3d2d695ff171589f475
    *   An array of informations about the test purpose.
    */
   public static function getInfo() {
