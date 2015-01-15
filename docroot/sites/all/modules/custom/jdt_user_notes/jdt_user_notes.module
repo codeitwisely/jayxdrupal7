@@ -67,7 +67,11 @@ function jdt_user_notes_menu() {
     'title' => 'Delete a note',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('jdt_user_notes_delete_form', 1),
-    'access arguments' => array(1, 'delete own user notes', 'delete any user notes'),
+    'access arguments' => array(
+      1,
+      'delete own user notes',
+      'delete any user notes',
+    ),
     'access callback' => 'jdt_user_notes_access_callback',
     'type' => MENU_CALLBACK,
   );
@@ -79,13 +83,14 @@ function jdt_user_notes_menu() {
  *
  * Manage access permission to notes.
  *
- * @param $object_loaded
+ * @param object $object_loaded
  *   The object loaded on the page can be a note or a node.
- * @param $permission
+ * @param string $permission
  *   The global permission such as edit own notes.
- * @param $super_permission
+ * @param string $super_permission
  *   The super permission such as edit any notes.
- * @return
+ *
+ * @return bool
  *   True or false.
  */
 function jdt_user_notes_access_callback($object_loaded, $permission, $super_permission) {
@@ -112,9 +117,10 @@ function jdt_user_notes_access_callback($object_loaded, $permission, $super_perm
 /**
  * Loader for getting notes in object format for a given note_id.
  *
- * @param $note_id
+ * @param int $note_id
  *   The note_id to load.
- * @return
+ *
+ * @return object
  *   Return result in object format.
  */
 function jdt_user_notes_note_load($note_id) {
@@ -127,15 +133,16 @@ function jdt_user_notes_note_load($note_id) {
  *
  * Add/edit form for a user note.
  *
- * @param $form
+ * @param object $form
  *   The add note form.
- * @param $form_state
+ * @param array $form_state
  *   The form elements available.
- * @param $node
+ * @param object $node
  *   The object pass can be a node.
- * @param $note
+ * @param object $note
  *   The object passed can be a note.
- * @return
+ *
+ * @return object
  *   The add/edit note form for an article which nid is passed on the url.
  */
 function jdt_user_notes_note_form($form, &$form_state, $node = NULL, $note = NULL) {
@@ -174,9 +181,9 @@ function jdt_user_notes_note_form($form, &$form_state, $node = NULL, $note = NUL
 /**
  * Add the data to be insert or updated on the jdt user notes table.
  *
- * @param $form
+ * @param object $form
  *   The add note form.
- * @param $form_state
+ * @param array $form_state
  *   The form elements available.
  */
 function jdt_user_notes_note_form_submit($form, &$form_state) {
@@ -185,7 +192,7 @@ function jdt_user_notes_note_form_submit($form, &$form_state) {
   $entry = array(
     'article_nid' => $values['article_nid'],
     'author_uid' => $values['author_uid'],
-    'note_text' => check_plain($values['note_text'])
+    'note_text' => check_plain($values['note_text']),
   );
   if (!$values['note_id']) {
     $create = _jdt_user_notes_create_note($entry);
@@ -205,9 +212,10 @@ function jdt_user_notes_note_form_submit($form, &$form_state) {
  *
  * Display the note_text field for a given note object passed in parameter.
  *
- * @param $note
+ * @param object $note
  *   The note object.
- * @return
+ *
+ * @return table
  *   The note_text field for the note passed in the url.
  */
 function jdt_user_notes_note_view($note) {
@@ -223,13 +231,14 @@ function jdt_user_notes_note_view($note) {
 /**
  * Display the form to delete a note which id is passed in the url.
  *
- * @param $form
+ * @param object $form
  *   The delete note form.
- * @param $form_state
+ * @param array $form_state
  *   The form elements available.
- * @param $note
+ * @param object $note
  *   The note object.
- * @return
+ *
+ * @return object
  *   The delete form for a note.
  */
 function jdt_user_notes_delete_form($form, &$form_state, $note) {
@@ -254,9 +263,9 @@ function jdt_user_notes_delete_form($form, &$form_state, $note) {
 /**
  * The handler on delete form submission.
  *
- * @param $form
+ * @param object $form
  *   The delete note form.
- * @param $form_state
+ * @param array  $form_state
  *   The note form elements available.
  */
 function jdt_user_notes_delete_form_submit($form, &$form_state) {
@@ -273,10 +282,9 @@ function jdt_user_notes_delete_form_submit($form, &$form_state) {
 /**
  * Get the uid of the current user.
  *
- * @return
+ * @return int
  *   Current user uid.
  */
-
 function jdt_user_notes_get_current_user_id() {
   global $user;
   $user_id = $user->uid;
