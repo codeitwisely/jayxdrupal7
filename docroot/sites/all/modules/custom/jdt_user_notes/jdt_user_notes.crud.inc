@@ -6,18 +6,21 @@
  */
 
 /**
- * Select a note for a given note_id or all notes for a given node id .
+ * Select a note for a given note_id or all notes for a given node id.
  *
- * @param $note_id
+ * The note author_uid must be equal to the uid of the logged user.
+ *
+ * @param int $note_id
  *   The note_id to load.
- * @param
+ * @param int $nid
  *   The note id if its given to the function parameter.
- * @param
+ * @param int $uid
  *   The user id if its given to the function parameter.
- * @return
+ *
+ * @return bool
  *   Result as array of objects.
  */
-function _jdt_user_notes_select_note($note_id, $nid = NULL, $uid = NULL) {
+function _jdt_user_notes_select_note($note_id, $nid, $uid) {
   try {
     $query = db_select('jdt_user_notes', 'jun');
     $query->fields('jun');
@@ -42,9 +45,10 @@ function _jdt_user_notes_select_note($note_id, $nid = NULL, $uid = NULL) {
 /**
  * Delete a note.
  *
- * @param $note_id
+ * @param int $note_id
  *   The note_id to delete.
- * @return
+ *
+ * @return bool
  *   Return the number of deleted rows or false.
  */
 function _jdt_user_notes_del_note($note_id) {
@@ -66,9 +70,10 @@ function _jdt_user_notes_del_note($note_id) {
 /**
  * Update a note.
  *
- * @param $entry
+ * @param array $entry
  *   Array of fields to be updated on the DB.
- * @return
+ *
+ * @return bool
  *   The number of updated rows or false.
  */
 function _jdt_user_notes_updt_note($entry = array()) {
@@ -89,11 +94,12 @@ function _jdt_user_notes_updt_note($entry = array()) {
 }
 
 /**
- * Add a note to an existing Article.
+ * Add a note to an existing article.
  *
- * @param $entry
+ * @param array $entry
  *   Array of fields to insert on the DB.
- * @return
+ *
+ * @return bool
  *   The last id inserted on the table or false.
  */
 function _jdt_user_notes_create_note($entry = array()) {
