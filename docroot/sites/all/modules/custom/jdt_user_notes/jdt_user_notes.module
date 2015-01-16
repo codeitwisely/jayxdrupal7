@@ -433,7 +433,6 @@ function jdt_user_notes_page() {
  *   The Add/edit note form.
  */
 function jdt_user_notes_callback($ajax) {
-  dpm($form);
   if ($ajax) {
     ctools_include('ajax');
     ctools_include('modal');
@@ -443,7 +442,7 @@ function jdt_user_notes_callback($ajax) {
     );
     // Use ctools to generate ajax instructions for the browser to create,
     // a form in a modal popup.
-    $output = ctools_modal_form_wrapper('jdt_user_notes_note_form', $form_state, $object_loaded);
+    $output = ctools_modal_form_wrapper('jdt_user_notes_note_form', $form_state);
     // If the form has been submitted, there may be additional instructions,
     // such as dismissing the modal popup.
     if (!empty($form_state['ajax_commands'])) {
@@ -455,5 +454,23 @@ function jdt_user_notes_callback($ajax) {
   }
   else {
     return drupal_get_form('jdt_user_notes_note_form');
+  }
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function jdt_user_notes_node_view_alter(&$build) {
+  $nid = $build['body']['#object']->nid;
+  if ($build['body']['#object']->type = 'article_1') {
+    // Add your own custom link.
+    $build['links']['node']['#links']['add'] = array(
+      'title' => t('Add a note to this article'),
+      'href' => 'jdt-user-notes/' . $nid . '/add',
+      'html' => TRUE,
+      'attributes' => array(
+        'title' => 'Test link',
+      ),
+    );
   }
 }
