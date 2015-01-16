@@ -381,8 +381,8 @@ function template_preprocess_jdt_user_notes(&$variables) {
   $current_user_uid = jdt_user_notes_get_current_user_id();
   $variables['node_title'] = $node->title;
   $variables['node_author'] = $node->name;
-  $variables['notes'] = _jdt_user_notes_article_notes($node->nid);
-  $variables['edit'] = _jdt_user_notes_make_link($link_text = '');
+  $variables['notes'] = _jdt_user_notes_select_note(NULL, $node->nid, $current_user_uid);
+  $variables['edit'] = jdt_user_notes_make_link($link_text = '');
 }
 
 /**
@@ -398,7 +398,7 @@ function template_preprocess_jdt_user_notes(&$variables) {
  * @return string
  *   A link who will fire the popup.
  */
-function _jdt_user_notes_make_link($link_text = '') {
+function jdt_user_notes_make_link($link_text = '') {
   ctools_include('modal');
   ctools_modal_add_js();
   // Set a default value if no text in supplied.
@@ -420,7 +420,7 @@ function jdt_user_notes_page() {
   // Load the modal library and add the modal javascript.
   ctools_include('modal');
   ctools_modal_add_js();
-  return _jdt_user_notes_make_link('Magical modal');
+  return jdt_user_notes_make_link('Magical modal');
 }
 
 /**
@@ -433,6 +433,7 @@ function jdt_user_notes_page() {
  *   The Add/edit note form.
  */
 function jdt_user_notes_callback($ajax) {
+  dpm($form);
   if ($ajax) {
     ctools_include('ajax');
     ctools_include('modal');

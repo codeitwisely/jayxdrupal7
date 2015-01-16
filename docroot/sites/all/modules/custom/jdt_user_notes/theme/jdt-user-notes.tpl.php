@@ -36,9 +36,11 @@
       </div>
     <?php endif; ?>
 
-    <div class="edit-link">
-      <span><?php print $edit; ?></span>
-    </div>
+    <?php if ($edit): ?>
+      <div class="edit-link">
+        <span><?php print $edit; ?></span>
+      </div>
+    <?php endif; ?>
 
     <hr />
   </div>
