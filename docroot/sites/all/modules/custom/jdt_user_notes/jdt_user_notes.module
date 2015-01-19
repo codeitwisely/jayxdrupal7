@@ -463,7 +463,7 @@ function jdt_user_notes_callback($ajax) {
 function jdt_user_notes_node_view_alter(&$build) {
   $nid = $build['body']['#object']->nid;
   if ($build['body']['#object']->type = 'article_1') {
-    // Add your own custom link.
+    // Custom link.
     $build['links']['node']['#links']['add'] = array(
       'title' => t('Add a note to this article'),
       'href' => 'jdt-user-notes/' . $nid . '/add',
