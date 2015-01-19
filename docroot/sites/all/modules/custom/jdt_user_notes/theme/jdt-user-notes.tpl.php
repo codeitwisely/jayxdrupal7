@@ -38,10 +38,10 @@
 
     <?php if ($edit): ?>
       <div class="edit-link">
-        <span><?php print $edit; ?></span>
+        <span><?php print $edit; ?></span><br />
+        <span><a href="/jdt-user-notes/nojs/<?php print $note->note_id; ?>" class= 'ctools-use-modal'>Other link</a></span>
       </div>
     <?php endif; ?>
-
     <hr />
   </div>
 <?php endforeach; ?>

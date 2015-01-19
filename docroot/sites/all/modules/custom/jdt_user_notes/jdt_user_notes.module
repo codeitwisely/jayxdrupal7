@@ -60,10 +60,12 @@ function jdt_user_notes_menu() {
     'title' => 'Edit a note',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('jdt_user_notes_note_form', 1),
-    'access arguments' => array(1, 'edit own user notes', 'edit any user notes'),
-    'access callback' => '_jdt_user_notes_access_callback',
-    'modal' => TRUE,
-    'modal' => TRUE,
+    'access arguments' => array(
+      1,
+      'edit own user notes',
+      'edit any user notes',
+    ),
+    'access callback' => 'jdt_user_notes_access_callback',
     'type' => MENU_CALLBACK,
   );
   $items['jdt-user-notes/%jdt_user_notes_note/delete'] = array(
@@ -87,14 +89,9 @@ function jdt_user_notes_menu() {
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
-  $items['jdt-user-notes/%ctools_js'] = array(
+  $items['jdt-user-notes/%ctools_js/%jdt_user_notes_note'] = array(
     'page callback' => 'jdt_user_notes_callback',
-    'page arguments' => array(1),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-  $items['modal/page'] = array(
-    'page callback' => 'jdt_user_notes_page',
+    'page arguments' => array(1, 2),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
@@ -179,7 +176,6 @@ function jdt_user_notes_note_form($form, &$form_state, $node = NULL, $note = NUL
     '#rows' => 5,
     '#required' => TRUE,
   );
-
   // It's a node.
   if (isset($node->nid)) {
     $form['article_nid']['#value'] = $node->nid;
@@ -382,7 +378,7 @@ function template_preprocess_jdt_user_notes(&$variables) {
   $variables['node_title'] = $node->title;
   $variables['node_author'] = $node->name;
   $variables['notes'] = _jdt_user_notes_select_note(NULL, $node->nid, $current_user_uid);
-  $variables['edit'] = jdt_user_notes_make_link($link_text = '');
+  $variables['edit'] = jdt_user_notes_make_link($link_text = '', $variables['notes']);
 }
 
 /**
@@ -398,29 +394,14 @@ function template_preprocess_jdt_user_notes(&$variables) {
  * @return string
  *   A link who will fire the popup.
  */
-function jdt_user_notes_make_link($link_text = '') {
+function jdt_user_notes_make_link($link_text = '', $note) {
   ctools_include('modal');
   ctools_modal_add_js();
   // Set a default value if no text in supplied.
   if (empty($link_text)) {
     $link_text = 'Edit note';
   }
-  return ' ' . l($link_text, 'jdt-user-notes/nojs', array('attributes' => array('class' => 'ctools-use-modal'))) . ' ';
-}
-
-/**
- * Page callback.
- *
- * An example page.
- *
- * @return string
- *   The page callback(the the link).
- */
-function jdt_user_notes_page() {
-  // Load the modal library and add the modal javascript.
-  ctools_include('modal');
-  ctools_modal_add_js();
-  return jdt_user_notes_make_link('Magical modal');
+  return ' ' . l($link_text, 'jdt-user-notes/nojs/' . $note[0]->note_id , array('attributes' => array('class' => 'ctools-use-modal'))) . ' ';
 }
 
 /**
@@ -432,7 +413,32 @@ function jdt_user_notes_page() {
  * @return object.
  *   The Add/edit note form.
  */
-function jdt_user_notes_callback($ajax) {
+// function jdt_user_notes_callback($ajax) {
+//   if ($ajax) {
+//     ctools_include('ajax');
+//     ctools_include('modal');
+//     $form_state = array(
+//       'ajax' => TRUE,
+//       'title' => t('Add/Edit a note'),
+//     );
+//     // Use ctools to generate ajax instructions for the browser to create,
+//     // a form in a modal popup.
+//     $output = ctools_modal_form_wrapper('jdt_user_notes_note_form', $form_state);
+//     // If the form has been submitted, there may be additional instructions,
+//     // such as dismissing the modal popup.
+//     if (!empty($form_state['ajax_commands'])) {
+//       $output = $form_state['ajax_commands'];
+//     }
+//     // Return the ajax instructions to the browser via ajax_render().
+//     print ajax_render($output);
+//     drupal_exit();
+//   }
+//   else {
+//     return drupal_get_form('jdt_user_notes_note_form');
+//   }
+// }
+
+function jdt_user_notes_callback($ajax, $note, $node = NULL) {
   if ($ajax) {
     ctools_include('ajax');
     ctools_include('modal');
@@ -440,9 +446,15 @@ function jdt_user_notes_callback($ajax) {
       'ajax' => TRUE,
       'title' => t('Add/Edit a note'),
     );
+    $form_state['note_loaded'] = $note;
+    $form_state['node_loaded'] = $node;
+    dpm($form_state);
     // Use ctools to generate ajax instructions for the browser to create,
     // a form in a modal popup.
+
+    //$form = drupal_get_form('jdt_user_notes_note_form', $note, $node);
     $output = ctools_modal_form_wrapper('jdt_user_notes_note_form', $form_state);
+    // dpm($form_state);
     // If the form has been submitted, there may be additional instructions,
     // such as dismissing the modal popup.
     if (!empty($form_state['ajax_commands'])) {
